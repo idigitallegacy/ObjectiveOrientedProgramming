@@ -21,11 +21,6 @@ public class IsuServicetest
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Service should contain student.");
         group = service.FindGroup(groupName);
         Assert.True(group?.Students.Contains(student), "Now it should be updated and contain new student.");
-
-        // If we try to change the local student, it won't change the service's stored student.
-        student.Id = 500;
-        Assert.False(service.FindGroup(groupName)?.Students.Contains(student), "Group should not contain 'new' student");
-        Assert.False(service.FindGroup(groupName)?.Students.ToList()[0].Id == student.Id, "Student at service should not change");
     }
 
     [Fact]

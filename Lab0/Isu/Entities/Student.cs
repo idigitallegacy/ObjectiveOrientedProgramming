@@ -16,9 +16,9 @@ public class Student
         Id = rhs.Id;
     }
 
-    public string Name { get; set; }
-    public Group GroupId { get; set; }
-    public int Id { get; set; }
+    public string Name { get; }
+    public Group GroupId { get; }
+    public int Id { get; }
 
     public static bool operator !=(Student lhs, Student rhs)
     {
