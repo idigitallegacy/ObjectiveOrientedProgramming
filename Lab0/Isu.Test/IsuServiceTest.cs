@@ -14,6 +14,7 @@ public class IsuServicetest
         var groupName = new GroupName("M3206"); // M3206 ~ M32061
         var group = service.AddGroup(groupName);
         var student = service.AddStudent(group, "Michael Makarov");
+
         Assert.True(student.GroupId == group, "student.GroupId should be equal to the service stored one");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Group should contain student.");
         Assert.False(group.Students.Contains(student), "Previously returned from service group shouldn't contain new student.");
@@ -36,6 +37,7 @@ public class IsuServicetest
         for (var i = 0; i < 30; ++i) // 30 is a MaxStudentAmount private constant at Isu.Entities.Group
             service.AddStudent(group, i.ToString());
         var ex = Assert.Throws<IsuException>(() => service.AddStudent(group, "Michael Makarov"));
+
         Assert.True(ex.Message == "Unable to add student: group is full.");
     }
 
@@ -68,7 +70,6 @@ public class IsuServicetest
         var group2 = service.AddGroup(groupName2);
         var student = service.AddStudent(group1, "Michael Makarov");
         service.ChangeStudentGroup(student, group2);
-
         student = service.GetStudent(student.Id);
 
         Assert.True(service.FindGroup(groupName2)?.Students.Contains(student), "New group should contain student");

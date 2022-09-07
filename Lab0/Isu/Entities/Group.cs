@@ -6,7 +6,7 @@ namespace Isu.Entities;
 public class Group
 {
     private const byte MaxStudentsAmount = 30;
-    private List<Student> _students = new List<Student>();
+    private List<Student> _students = new ();
     private byte _studentsAmount;
     public Group(GroupName groupName)
     {
@@ -24,14 +24,7 @@ public class Group
 
     public GroupName Name { get; }
     public CourseNumber Course { get; }
-    public IEnumerable<Student> Students
-    {
-        get
-        {
-            foreach (Student student in _students)
-                yield return student;
-        }
-    }
+    public IEnumerable<Student> Students { get => _students.AsReadOnly(); }
 
     public static bool operator !=(Group lhs, Group rhs)
     {
@@ -42,14 +35,6 @@ public class Group
     {
         return lhs.Name == rhs.Name;
     }
-
-    /*
-     public List<Student> Students
-     {
-         get => _students;
-         private set => _students = value;
-    }
-    */
 
     public void AddStudent(Student student)
     {
