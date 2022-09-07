@@ -50,6 +50,7 @@ public class Group
     {
         if (!_students.Remove(student))
             throw new IsuException("Student not found.");
+        --_studentsAmount;
     }
 
     public Student GetStudent(int id)
