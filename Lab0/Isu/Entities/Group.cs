@@ -5,9 +5,9 @@ namespace Isu.Entities;
 
 public class Group
 {
-    private const byte MaxStudentsAmount = 30;
+    private const int MaxStudentsAmount = 30;
     private List<Student> _students = new ();
-    private byte _studentsAmount;
+    private int _studentsAmount;
     public Group(GroupName groupName)
     {
         Name = groupName;
