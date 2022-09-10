@@ -4,16 +4,16 @@ namespace Isu.Models;
 
 public class CourseNumber
 {
-    private const byte MinValue = 1;
-    private const byte MaxValue = 4;
-    private byte _value = 1;
+    private const int MinValue = 1;
+    private const int MaxValue = 4;
+    private int _value = 1;
 
-    public CourseNumber(byte number)
+    public CourseNumber(int number)
     {
         Value = number;
     }
 
-    public byte Value
+    public int Value
     {
         get
         {

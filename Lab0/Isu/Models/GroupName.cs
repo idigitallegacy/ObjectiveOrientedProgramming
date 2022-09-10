@@ -9,7 +9,7 @@ public class GroupName
     private string _name;
     private string _facultyId;
     private CourseNumber _course;
-    private byte _groupId;
+    private int _groupId;
 
     public GroupName(string groupName)
     {
@@ -57,7 +57,7 @@ public class GroupName
         private set => _course = value;
     }
 
-    public byte GroupId
+    public int GroupId
     {
         get => _groupId;
         private set => _groupId = value;
