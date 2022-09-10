@@ -7,7 +7,6 @@ public class Group
 {
     private const int MaxStudentsAmount = 30;
     private List<Student> _students = new ();
-    private int _studentsAmount;
 
     public Group(GroupName groupName)
     {
@@ -29,21 +28,19 @@ public class Group
 
     public void AddStudent(Student student)
     {
-        if (_studentsAmount == MaxStudentsAmount)
+        if (_students.Count == MaxStudentsAmount)
             throw new IsuException("Unable to add student: group is full.");
 
         if (_students.Contains(student))
             throw new IsuException("Unable to add student: group already contains student.");
 
         _students.Add(student);
-        _studentsAmount++;
     }
 
     public void RemoveStudent(Student student)
     {
         if (!_students.Remove(student))
             throw new IsuException("Student not found.");
-        _studentsAmount++;
     }
 
     public Student GetStudent(int id)

@@ -22,7 +22,8 @@ public class IsuService : IIsuService
     public Student AddStudent(Group group, string name)
     {
         var student = new Student(name, group.Name, _lastStudentId);
-        _groups[_groups.FindIndex(it => it == group)].AddStudent(student);
+        _groups.Find(groupIterator => groupIterator == group)?
+            .AddStudent(student);
         _lastStudentId++;
         return student;
     }
@@ -49,7 +50,7 @@ public class IsuService : IIsuService
         _groups.ForEach(group =>
         {
             if (group.Name.Course == courseNumber)
-                group.Students.ToList().ForEach(student => students.Add(student));
+                students.AddRange(group.Students);
         });
         return students;
     }
@@ -74,10 +75,10 @@ public class IsuService : IIsuService
     {
         ValidateGroupChange(student, newGroup);
 
-        _groups[_groups.FindIndex(group => group == newGroup)]
+        _groups.Find(group => group == newGroup)?
             .AddStudent(new Student(student.Name, newGroup.Name, student.Id));
 
-        _groups[_groups.FindIndex(group => group.Name.NameAsString == student.GroupId.NameAsString)]
+        _groups.Find(group => group.Name.NameAsString == student.GroupId.NameAsString)?
             .RemoveStudent(student);
     }
 
@@ -86,11 +87,11 @@ public class IsuService : IIsuService
         if (FindGroup(newGroup.Name) is null)
             throw new IsuException("Unable to find new group.");
 
-        if (_groups[_groups.FindIndex(group => group.Name.NameAsString == student.GroupId.NameAsString)]
+        if (_groups.Find(group => group.Name.NameAsString == student.GroupId.NameAsString)?
                 .FindStudent(student.Id) is null)
             throw new IsuException("Unable to change student's group: Already removed from old group.");
 
-        if (_groups[_groups.FindIndex(group => group == newGroup)]
+        if (_groups.Find(group => group == newGroup)?
                 .FindStudent(student.Id) is not null)
             throw new IsuException("Unable to change student's group: Already exists at the new group.");
     }

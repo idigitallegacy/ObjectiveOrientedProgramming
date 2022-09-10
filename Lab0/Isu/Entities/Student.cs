@@ -22,7 +22,7 @@ public class Student
 
     public static bool operator ==(Student student1, Student student2)
     {
-        return !(student1 != student2);
+        return student1.Id == student2.Id;
     }
 
     public override bool Equals(object? obj)
