@@ -65,6 +65,6 @@ public class Group
 
     public override int GetHashCode()
     {
-        return Name.GetHashCode() + Students.GetHashCode();
+        return HashCode.Combine(Name.GetHashCode(), Students.GetHashCode());
     }
 }
