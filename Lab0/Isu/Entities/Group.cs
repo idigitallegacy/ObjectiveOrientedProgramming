@@ -13,24 +13,24 @@ public class Group
         Name = groupName;
     }
 
-    public Group(Group rhs)
+    public Group(Group group)
     {
-        Name = rhs.Name;
-        _students = rhs.Students.ToList();
-        _studentsAmount = rhs._studentsAmount;
+        Name = new GroupName(group.Name);
+        _students = new List<Student>(group.Students.ToList());
+        _studentsAmount = group._studentsAmount;
     }
 
     public GroupName Name { get; }
     public IEnumerable<Student> Students { get => _students.AsReadOnly(); }
 
-    public static bool operator !=(Group lhs, Group rhs)
+    public static bool operator !=(Group group1, Group group2)
     {
-        return lhs.Name != rhs.Name;
+        return group1.Name != group2.Name;
     }
 
-    public static bool operator ==(Group lhs, Group rhs)
+    public static bool operator ==(Group group1, Group group2)
     {
-        return lhs.Name == rhs.Name;
+        return group1.Name == group2.Name;
     }
 
     public void AddStudent(Student student)
