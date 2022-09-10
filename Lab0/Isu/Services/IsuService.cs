@@ -65,7 +65,7 @@ public class IsuService : IIsuService
         var students = new List<Student>();
         _groups.ForEach(group =>
         {
-            if (group.Course == courseNumber)
+            if (group.Name.Course == courseNumber)
                 group.Students.ToList().ForEach(student => { students.Add(new Student(student)); });
         });
         return students;
@@ -84,7 +84,7 @@ public class IsuService : IIsuService
         var groups = new List<Group>();
         _groups.ForEach(group =>
         {
-            if (group.Course == courseNumber)
+            if (group.Name.Course == courseNumber)
                 groups.Add(new Group(group));
         });
         return groups;

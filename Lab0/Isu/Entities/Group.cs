@@ -11,19 +11,16 @@ public class Group
     public Group(GroupName groupName)
     {
         Name = groupName;
-        Course = groupName.Course;
     }
 
     public Group(Group rhs)
     {
         Name = rhs.Name;
-        Course = rhs.Course;
         _students = rhs.Students.ToList();
         _studentsAmount = rhs._studentsAmount;
     }
 
     public GroupName Name { get; }
-    public CourseNumber Course { get; }
     public IEnumerable<Student> Students { get => _students.AsReadOnly(); }
 
     public static bool operator !=(Group lhs, Group rhs)
