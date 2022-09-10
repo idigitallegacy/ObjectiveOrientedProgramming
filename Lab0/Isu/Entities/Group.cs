@@ -14,13 +14,6 @@ public class Group
         Name = groupName;
     }
 
-    public Group(Group group)
-    {
-        Name = new GroupName(group.Name);
-        _students = new List<Student>(group.Students.ToList());
-        _studentsAmount = group._studentsAmount;
-    }
-
     public GroupName Name { get; }
     public IReadOnlyCollection<Student> Students => _students;
 

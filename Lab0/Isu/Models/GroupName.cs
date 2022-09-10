@@ -24,7 +24,7 @@ public class GroupName
     {
         NameAsString = new string(groupName.NameAsString);
         FacultyId = new string(groupName.FacultyId);
-        Course = new CourseNumber(groupName.Course);
+        Course = new CourseNumber(groupName.Course.Value);
         GroupId = groupName.GroupId;
     }
 

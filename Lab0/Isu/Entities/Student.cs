@@ -11,13 +11,6 @@ public class Student
         Id = id;
     }
 
-    public Student(Student student)
-    {
-        Name = new string(student.Name);
-        GroupId = new GroupName(student.GroupId);
-        Id = student.Id;
-    }
-
     public string Name { get; }
     public GroupName GroupId { get; }
     public int Id { get; }

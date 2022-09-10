@@ -16,15 +16,7 @@ public class IsuService : IIsuService
 
         var group = new Group(name);
         _groups.Add(group);
-        return new Group(group);
-        /*
-         * I still need to use the construction above at least for Group class. Argumentation code:
-         * var service = new IsuService();
-         * var group = service.AddGroup(new GroupName("M3206"));
-         * group.AddStudent(new Student("Fake", group.Name, 100)); <- Leads "Fake" student to appear at
-         *                                                            IsuService._groups[0].Students, but it wasn't
-         *                                                            added via IsuService.
-         */
+        return group;
     }
 
     public Student AddStudent(Group group, string name)
@@ -65,7 +57,7 @@ public class IsuService : IIsuService
     public Group? FindGroup(GroupName groupName)
     {
         Group? needle = _groups.Find(group => group.Name.NameAsString == groupName.NameAsString);
-        return (needle is null) ? null : new Group(needle); // see large comment at AddGroup() method above.
+        return needle;
     }
 
     public List<Group> FindGroups(CourseNumber courseNumber)

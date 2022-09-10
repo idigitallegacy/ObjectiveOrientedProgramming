@@ -13,11 +13,6 @@ public class CourseNumber
         Value = number;
     }
 
-    public CourseNumber(CourseNumber courseNumber)
-    {
-        Value = courseNumber.Value;
-    }
-
     public int Value
     {
         get
@@ -32,14 +27,14 @@ public class CourseNumber
         }
     }
 
-    public static bool operator !=(CourseNumber lhs, CourseNumber rhs)
+    public static bool operator !=(CourseNumber courseNumber1, CourseNumber courseNumber2)
     {
-        return lhs.Value != rhs.Value;
+        return courseNumber1.Value != courseNumber2.Value;
     }
 
-    public static bool operator ==(CourseNumber lhs, CourseNumber rhs)
+    public static bool operator ==(CourseNumber courseNumber1, CourseNumber courseNumber2)
     {
-        return lhs.Value == rhs.Value;
+        return courseNumber1.Value == courseNumber2.Value;
     }
 
     public override bool Equals(object? obj)
