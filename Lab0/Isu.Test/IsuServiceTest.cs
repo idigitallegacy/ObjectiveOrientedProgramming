@@ -17,12 +17,10 @@ public class IsuServicetest
 
         Assert.True(student.Group == group.Name, "student.Group should be equal to the service stored one");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Group should contain student.");
-        Assert.False(group.Students.Contains(student), "Previously returned from service group shouldn't contain new student.");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Service should contain student.");
 
         group = service.FindGroup(groupName);
-
-        Assert.True(group?.Students.Contains(student), "Now it should be updated and contain new student.");
+        Assert.True(group?.Students.Contains(student), "Group should contain student.");
     }
 
     [Fact]
