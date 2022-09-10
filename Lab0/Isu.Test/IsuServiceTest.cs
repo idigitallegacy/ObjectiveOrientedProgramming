@@ -15,7 +15,7 @@ public class IsuServicetest
         var group = service.AddGroup(groupName);
         var student = service.AddStudent(group, "Michael Makarov");
 
-        Assert.True(student.GroupId == group.Name, "student.GroupId should be equal to the service stored one");
+        Assert.True(student.Group == group.Name, "student.Group should be equal to the service stored one");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Group should contain student.");
         Assert.False(group.Students.Contains(student), "Previously returned from service group shouldn't contain new student.");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Service should contain student.");
@@ -71,6 +71,6 @@ public class IsuServicetest
 
         Assert.True(service.FindGroup(groupName2)?.Students.Contains(student), "New group should contain student");
         Assert.False(service.FindGroup(groupName1)?.Students.Contains(student), "Old group shouldn't contain student");
-        Assert.True(service.FindGroup(groupName2) !.Name.NameAsString == service.FindStudent(student.Id) !.GroupId.NameAsString, "Student should contain new group");
+        Assert.True(service.FindGroup(groupName2) !.Name.NameAsString == service.FindStudent(student.Id) !.Group.NameAsString, "Student should contain new group");
     }
 }
