@@ -6,22 +6,21 @@ public class GroupName
 {
     private const string PossibleFacultyLettersSet = "M";
 
-    private string _name;
+    private string _nameAsString;
     private string _facultyId;
     private CourseNumber _course;
     private int _groupId;
 
-    public GroupName(string groupName)
+    public GroupName(string groupNameAsString)
     {
-        Name = groupName;
-        _name = groupName;
-        FacultyId = groupName[0].ToString() + groupName[1];
+        _nameAsString = groupNameAsString;
+        FacultyId = groupNameAsString[0].ToString() + groupNameAsString[1];
         _facultyId = FacultyId;
         try
         {
-            Course = new CourseNumber(Convert.ToInt32(groupName[2] - '0'));
+            Course = new CourseNumber(Convert.ToInt32(groupNameAsString[2] - '0'));
             _course = Course;
-            GroupId = Convert.ToByte(groupName[3].ToString() + groupName[4]);
+            GroupId = Convert.ToByte(groupNameAsString[3].ToString() + groupNameAsString[4]);
         }
         catch (IsuException ex)
         {
@@ -30,14 +29,22 @@ public class GroupName
         }
     }
 
-    public string Name
+    public GroupName(GroupName groupName)
     {
-        get => _name;
+        _nameAsString = new string(groupName.NameAsString);
+        _facultyId = new string(groupName.FacultyId);
+        _course = new CourseNumber(groupName.Course);
+        _groupId = groupName.GroupId;
+    }
+
+    public string NameAsString
+    {
+        get => _nameAsString;
         private set
         {
             if (value.Length != 5)
                 throw new IsuException("Invalid group name: it must contain 5 characters.");
-            _name = value;
+            _nameAsString = value;
         }
     }
 

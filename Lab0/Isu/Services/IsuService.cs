@@ -75,7 +75,7 @@ public class IsuService : IIsuService
 
     public Group? FindGroup(GroupName groupName)
     {
-        Group? needle = _groups.Find(group => group.Name.Name == groupName.Name);
+        Group? needle = _groups.Find(group => group.Name.NameAsString == groupName.NameAsString);
         return needle;
     }
 
