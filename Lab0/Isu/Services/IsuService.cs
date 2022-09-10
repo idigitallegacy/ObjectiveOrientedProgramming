@@ -4,6 +4,19 @@ using Isu.Models;
 
 namespace Isu.Services;
 
+/*
+ * All the sample code that proves comments is shown at <Isu.Test>/Sample.cs
+ */
+
+/*
+ * I use return new Group(group), return new Student(student), etc. constructions to prevent IsuService._groups
+ * editing from outer scope. E.g.:
+ * var service = new IsuService();
+ * var group = service.AddGroup(new GroupName("M3206"));
+ * group.AddStudent(new Student("Michael", group, 1)); <- leads to appear this student at IsuService._groups[0],
+ *                                                        if I remove return new Group(group) construction.
+ */
+
 public class IsuService : IIsuService
 {
     private readonly List<Group> _groups = new ();
@@ -27,9 +40,8 @@ public class IsuService : IIsuService
             ++_lastStudentId;
             return new Student(name, group, _lastStudentId - 1);
         }
-        catch (IsuException e)
+        catch (IsuException)
         {
-            Console.WriteLine(e);
             throw;
         }
     }
@@ -47,9 +59,7 @@ public class IsuService : IIsuService
         Student? needle = _groups
             .Find(group => group.FindStudent(id) is not null)?
                 .GetStudent(id);
-        return (needle is null)
-            ? null
-            : new Student(needle.Name, needle.GroupId, needle.Id);
+        return needle;
     }
 
     public List<Student> FindStudents(GroupName groupName)
@@ -95,6 +105,9 @@ public class IsuService : IIsuService
         if (FindGroup(newGroup.Name) is null)
             throw new IsuException("Unable to find new group.");
 
+        if (!ValidateGroupChange(student, newGroup))
+            throw new IsuException("Unable to change student's group");
+
         try
         {
             _groups[_groups.FindIndex(group => group == newGroup)]
@@ -103,26 +116,20 @@ public class IsuService : IIsuService
             _groups[_groups.FindIndex(group => group == student.GroupId)]
                 .RemoveStudent(student);
         }
-        catch (IsuException e)
+        catch (IsuException)
         {
-            // Restoring changes if some made
-            if (_groups.Find(group => group == newGroup)?
-                    .FindStudent(student.Id) is not null)
-            {
-                _groups.Find(group => group == newGroup)?
-                    .RemoveStudent(new Student(student.Name, newGroup, student.Id));
-            }
-
-            if (_groups.Find(group => group == student.GroupId)?
-                    .FindStudent(student.Id) is null)
-            {
-                _groups.Find(group => group == student.GroupId)?
-                    .AddStudent(student);
-            }
-
-            // Rethrowing
-            Console.WriteLine(e);
             throw;
         }
+    }
+
+    private bool ValidateGroupChange(Student student, Group newGroup)
+    {
+        if (_groups[_groups.FindIndex(group => group == student.GroupId)]
+                .FindStudent(student.Id) is null)
+            return false;
+        if (_groups[_groups.FindIndex(group => group == newGroup)]
+                .FindStudent(student.Id) is not null)
+            return false;
+        return true;
     }
 }
