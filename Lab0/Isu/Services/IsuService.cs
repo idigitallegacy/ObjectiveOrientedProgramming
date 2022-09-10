@@ -64,7 +64,7 @@ public class IsuService : IIsuService
 
     public Group? FindGroup(GroupName groupName)
     {
-        var needle = _groups.Find(group => group.Name.NameAsString == groupName.NameAsString);
+        Group? needle = _groups.Find(group => group.Name.NameAsString == groupName.NameAsString);
         return (needle is null) ? null : new Group(needle); // see large comment at AddGroup() method above.
     }
 
