@@ -13,6 +13,11 @@ public class CourseNumber
         Value = number;
     }
 
+    public CourseNumber(CourseNumber courseNumber)
+    {
+        Value = courseNumber.Value;
+    }
+
     public int Value
     {
         get
