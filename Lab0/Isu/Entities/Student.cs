@@ -9,25 +9,27 @@ public class Student
         Id = id;
     }
 
-    public Student(Student rhs)
+    public Student(Student student)
     {
-        Name = rhs.Name;
-        GroupId = rhs.GroupId;
-        Id = rhs.Id;
+        Name = new string(student.Name);
+        GroupId = new Group(student.GroupId);
+        Id = student.Id;
     }
 
     public string Name { get; }
     public Group GroupId { get; }
     public int Id { get; }
 
-    public static bool operator !=(Student lhs, Student rhs)
+    public static bool operator !=(Student student1, Student student2)
     {
-        return lhs.Name != rhs.Name & lhs.GroupId != rhs.GroupId & lhs.Id != rhs.Id;
+        return student1.Name != student2.Name &
+               student1.GroupId != student2.GroupId &
+               student1.Id != student2.Id;
     }
 
-    public static bool operator ==(Student lhs, Student rhs)
+    public static bool operator ==(Student student1, Student student2)
     {
-        return lhs.Name == rhs.Name & lhs.GroupId == rhs.GroupId & lhs.Id == rhs.Id;
+        return !(student1 == student2);
     }
 
     public override bool Equals(object? obj)
@@ -38,6 +40,6 @@ public class Student
 
     public override int GetHashCode()
     {
-        return (Name.GetHashCode() + GroupId.GetHashCode() + Id.GetHashCode()).GetHashCode();
+        return (Name.GetHashCode() + GroupId.GetHashCode() + Id).GetHashCode();
     }
 }
