@@ -24,21 +24,12 @@ public class CourseNumber
         {
             return _value;
         }
-        set
+        private set
         {
             if (value < MinValue | value > MaxValue)
                 throw new IsuException($"Invalid course number {value}, it must be between {MinValue} and {MaxValue}.");
             _value = value;
         }
-    }
-
-    public static CourseNumber operator ++(CourseNumber courseNumber)
-    {
-        if (courseNumber._value < MaxValue)
-            ++courseNumber._value;
-        else
-            throw new IsuException($"Unable to increase course value: it's already {MaxValue}");
-        return courseNumber;
     }
 
     public static bool operator !=(CourseNumber lhs, CourseNumber rhs)
@@ -59,6 +50,6 @@ public class CourseNumber
 
     public override int GetHashCode()
     {
-        return Value.GetHashCode();
+        return Value;
     }
 }

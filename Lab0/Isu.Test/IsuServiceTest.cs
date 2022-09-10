@@ -15,11 +15,13 @@ public class IsuServicetest
         var group = service.AddGroup(groupName);
         var student = service.AddStudent(group, "Michael Makarov");
 
-        Assert.True(student.GroupId == group, "student.GroupId should be equal to the service stored one");
+        Assert.True(student.GroupId == group.Name, "student.GroupId should be equal to the service stored one");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Group should contain student.");
         Assert.False(group.Students.Contains(student), "Previously returned from service group shouldn't contain new student.");
         Assert.True(service.FindGroup(groupName)?.Students.Contains(student), "Service should contain student.");
+
         group = service.FindGroup(groupName);
+
         Assert.True(group?.Students.Contains(student), "Now it should be updated and contain new student.");
     }
 
@@ -29,8 +31,8 @@ public class IsuServicetest
         var service = new IsuService();
         var groupName = new GroupName("M3206");
         var group = service.AddGroup(groupName);
-        for (var i = 0; i < 30; ++i) // 30 is a MaxStudentAmount private constant at Isu.Entities.Group
-            service.AddStudent(group, i.ToString());
+        for (var i = 0; i < 30; i++) // 30 is a MaxStudentAmount private constant at Isu.Entities.Group
+            service.AddStudent(group, Convert.ToString(i));
         var ex = Assert.Throws<IsuException>(() => service.AddStudent(group, "Michael Makarov"));
 
         Assert.True(ex.Message == "Unable to add student: group is full.");
@@ -69,6 +71,6 @@ public class IsuServicetest
 
         Assert.True(service.FindGroup(groupName2)?.Students.Contains(student), "New group should contain student");
         Assert.False(service.FindGroup(groupName1)?.Students.Contains(student), "Old group shouldn't contain student");
-        Assert.True(service.FindGroup(groupName2) ! == service.FindStudent(student.Id) !.GroupId, "Student should contain new group");
+        Assert.True(service.FindGroup(groupName2) !.Name.NameAsString == service.FindStudent(student.Id) !.GroupId.NameAsString, "Student should contain new group");
     }
 }

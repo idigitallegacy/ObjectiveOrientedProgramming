@@ -8,6 +8,7 @@ public class Group
     private const int MaxStudentsAmount = 30;
     private List<Student> _students = new ();
     private int _studentsAmount;
+
     public Group(GroupName groupName)
     {
         Name = groupName;
@@ -21,7 +22,7 @@ public class Group
     }
 
     public GroupName Name { get; }
-    public IEnumerable<Student> Students { get => _students.AsReadOnly(); }
+    public IReadOnlyCollection<Student> Students => _students;
 
     public static bool operator !=(Group group1, Group group2)
     {
@@ -30,32 +31,32 @@ public class Group
 
     public static bool operator ==(Group group1, Group group2)
     {
-        return group1.Name == group2.Name;
+        return group1.Name.NameAsString == group2.Name.NameAsString;
     }
 
     public void AddStudent(Student student)
     {
-        if (_students.Count == MaxStudentsAmount)
+        if (_studentsAmount == MaxStudentsAmount)
             throw new IsuException("Unable to add student: group is full.");
+
         if (_students.Contains(student))
             throw new IsuException("Unable to add student: group already contains student.");
+
         _students.Add(student);
-        ++_studentsAmount;
+        _studentsAmount++;
     }
 
     public void RemoveStudent(Student student)
     {
         if (!_students.Remove(student))
             throw new IsuException("Student not found.");
-        --_studentsAmount;
+        _studentsAmount++;
     }
 
     public Student GetStudent(int id)
     {
-        Student? student = _students.Find(it => it.Id == id);
-        if (student is null)
-            throw new IsuException($"Unable to get student {id} at group {Name}.");
-        return student;
+        return FindStudent(id) ??
+               throw new IsuException($"Unable to get student {id} at group {Name}.");
     }
 
     public Student? FindStudent(int id)
@@ -71,6 +72,6 @@ public class Group
 
     public override int GetHashCode()
     {
-        return (Name.GetHashCode() + Students.GetHashCode()).GetHashCode();
+        return Name.GetHashCode() + Students.GetHashCode();
     }
 }

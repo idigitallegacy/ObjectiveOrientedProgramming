@@ -4,69 +4,35 @@ namespace Isu.Models;
 
 public class GroupName
 {
-    private const string PossibleFacultyLettersSet = "M";
+    private char[] _possibleFacultyLettersArray = new char[] { 'M' };
 
-    private string _nameAsString;
-    private string _facultyId;
-    private CourseNumber _course;
-    private int _groupId;
-
-    public GroupName(string groupNameAsString)
+    public GroupName(string name)
     {
-        _nameAsString = groupNameAsString;
-        FacultyId = groupNameAsString[0].ToString() + groupNameAsString[1];
-        _facultyId = FacultyId;
-        try
-        {
-            Course = new CourseNumber(Convert.ToInt32(groupNameAsString[2] - '0'));
-            _course = Course;
-            GroupId = Convert.ToByte(groupNameAsString[3].ToString() + groupNameAsString[4]);
-        }
-        catch (IsuException ex)
-        {
-            Console.WriteLine(ex);
-            throw;
-        }
+        if (name.Length != 5)
+            throw new IsuException("Invalid group name: it must contain 5 characters.");
+
+        if (!_possibleFacultyLettersArray.Contains(name[0]))
+            throw new IsuException("Invalid group name: must start with M letter");
+
+        NameAsString = name;
+        FacultyId = Convert.ToString(name[0]) + name[1];
+        Course = new CourseNumber(Convert.ToInt32(name[2] - '0'));
+        GroupId = Convert.ToInt32(name[3].ToString() + name[4]);
     }
 
     public GroupName(GroupName groupName)
     {
-        _nameAsString = new string(groupName.NameAsString);
-        _facultyId = new string(groupName.FacultyId);
-        _course = new CourseNumber(groupName.Course);
-        _groupId = groupName.GroupId;
+        NameAsString = new string(groupName.NameAsString);
+        FacultyId = new string(groupName.FacultyId);
+        Course = new CourseNumber(groupName.Course);
+        GroupId = groupName.GroupId;
     }
 
-    public string NameAsString
-    {
-        get => _nameAsString;
-        private set
-        {
-            if (value.Length != 5)
-                throw new IsuException("Invalid group name: it must contain 5 characters.");
-            _nameAsString = value;
-        }
-    }
+    public string NameAsString { get; }
 
-    public string FacultyId
-    {
-        get => _facultyId;
-        private set
-        {
-            if (!PossibleFacultyLettersSet.Contains(value[0]))
-                throw new IsuException("Invalid group name: must start with M letter");
-        }
-    }
+    public string FacultyId { get; }
 
-    public CourseNumber Course
-    {
-        get => _course;
-        private set => _course = value;
-    }
+    public CourseNumber Course { get; }
 
-    public int GroupId
-    {
-        get => _groupId;
-        private set => _groupId = value;
-    }
+    public int GroupId { get; }
 }
