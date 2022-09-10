@@ -66,7 +66,9 @@ public class IsuService : IIsuService
         _groups.ForEach(group =>
         {
             if (group.Name.Course == courseNumber)
-                group.Students.ToList().ForEach(student => { students.Add(new Student(student)); });
+            {
+                group.Students.ToList().ForEach(student => { students.Add(student); });
+            }
         });
         return students;
     }
@@ -74,9 +76,7 @@ public class IsuService : IIsuService
     public Group? FindGroup(GroupName groupName)
     {
         Group? needle = _groups.Find(group => group.Name.Name == groupName.Name);
-        return (needle is null)
-            ? null
-            : new Group(needle);
+        return needle;
     }
 
     public List<Group> FindGroups(CourseNumber courseNumber)
@@ -85,7 +85,7 @@ public class IsuService : IIsuService
         _groups.ForEach(group =>
         {
             if (group.Name.Course == courseNumber)
-                groups.Add(new Group(group));
+                groups.Add(group);
         });
         return groups;
     }
