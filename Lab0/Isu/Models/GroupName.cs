@@ -4,7 +4,7 @@ namespace Isu.Models;
 
 public class GroupName
 {
-    private char[] _possibleFacultyLettersArray = new char[] { 'M' };
+    private static char[] _possibleFacultyLettersArray = new char[] { 'M' };
 
     public GroupName(string name)
     {
