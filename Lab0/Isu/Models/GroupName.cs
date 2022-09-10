@@ -19,7 +19,7 @@ public class GroupName
         _facultyId = FacultyId;
         try
         {
-            Course = new CourseNumber(Convert.ToByte(groupName[2] - '0'));
+            Course = new CourseNumber(Convert.ToInt32(groupName[2] - '0'));
             _course = Course;
             GroupId = Convert.ToByte(groupName[3].ToString() + groupName[4]);
         }
