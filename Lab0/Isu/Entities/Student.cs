@@ -33,6 +33,6 @@ public class Student
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name.GetHashCode(), Group.GetHashCode() + Id);
+        return HashCode.Combine(Name, Group, Id);
     }
 }

@@ -10,20 +10,20 @@ public class Group
 
     public Group(GroupName groupName)
     {
-        Name = groupName;
+        GroupName = groupName;
     }
 
-    public GroupName Name { get; }
+    public GroupName GroupName { get; }
     public IReadOnlyCollection<Student> Students => _students;
 
     public static bool operator !=(Group group1, Group group2)
     {
-        return group1.Name != group2.Name;
+        return group1.GroupName != group2.GroupName;
     }
 
     public static bool operator ==(Group group1, Group group2)
     {
-        return group1.Name.NameAsString == group2.Name.NameAsString;
+        return group1.GroupName.NameAsString == group2.GroupName.NameAsString;
     }
 
     public void AddStudent(Student student)
@@ -46,7 +46,7 @@ public class Group
     public Student GetStudent(int id)
     {
         return FindStudent(id) ??
-               throw new IsuException($"Unable to get student {id} at group {Name}.");
+               throw new IsuException($"Unable to get student {id} at group {GroupName}.");
     }
 
     public Student? FindStudent(int id)
@@ -62,6 +62,6 @@ public class Group
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name.GetHashCode(), Students.GetHashCode());
+        return HashCode.Combine(GroupName, Students);
     }
 }

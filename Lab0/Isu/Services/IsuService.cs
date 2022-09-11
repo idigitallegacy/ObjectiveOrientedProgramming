@@ -21,7 +21,7 @@ public class IsuService : IIsuService
 
     public Student AddStudent(Group group, string name)
     {
-        var student = new Student(name, group.Name, _lastStudentId);
+        var student = new Student(name, group.GroupName, _lastStudentId);
         _groups.Find(groupIterator => groupIterator == group)?
             .AddStudent(student);
         _lastStudentId++;
@@ -49,7 +49,7 @@ public class IsuService : IIsuService
         var students = new List<Student>();
         _groups.ForEach(group =>
         {
-            if (group.Name.Course == courseNumber)
+            if (group.GroupName.Course == courseNumber)
                 students.AddRange(group.Students);
         });
         return students;
@@ -57,7 +57,7 @@ public class IsuService : IIsuService
 
     public Group? FindGroup(GroupName groupName)
     {
-        return _groups.Find(group => group.Name.NameAsString == groupName.NameAsString);
+        return _groups.Find(group => group.GroupName.NameAsString == groupName.NameAsString);
     }
 
     public List<Group> FindGroups(CourseNumber courseNumber)
@@ -65,7 +65,7 @@ public class IsuService : IIsuService
         var groups = new List<Group>();
         _groups.ForEach(group =>
         {
-            if (group.Name.Course == courseNumber)
+            if (group.GroupName.Course == courseNumber)
                 groups.Add(group);
         });
         return groups;
@@ -76,18 +76,18 @@ public class IsuService : IIsuService
         ValidateGroupChange(student, newGroup);
 
         _groups.Find(group => group == newGroup)?
-            .AddStudent(new Student(student.Name, newGroup.Name, student.Id));
+            .AddStudent(new Student(student.Name, newGroup.GroupName, student.Id));
 
-        _groups.Find(group => group.Name.NameAsString == student.Group.NameAsString)?
+        _groups.Find(group => group.GroupName.NameAsString == student.Group.NameAsString)?
             .RemoveStudent(student);
     }
 
     private void ValidateGroupChange(Student student, Group newGroup)
     {
-        if (FindGroup(newGroup.Name) is null)
+        if (FindGroup(newGroup.GroupName) is null)
             throw new IsuException("Unable to find new group.");
 
-        if (_groups.Find(group => group.Name.NameAsString == student.Group.NameAsString)?
+        if (_groups.Find(group => group.GroupName.NameAsString == student.Group.NameAsString)?
                 .FindStudent(student.Id) is null)
             throw new IsuException("Unable to change student's group: Already removed from old group.");
 
