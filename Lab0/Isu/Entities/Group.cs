@@ -23,7 +23,7 @@ public class Group
 
     public static bool operator ==(Group group1, Group group2)
     {
-        return group1.GroupName.NameAsString == group2.GroupName.NameAsString;
+        return group1.GroupName.Name == group2.GroupName.Name;
     }
 
     public void AddStudent(Student student)

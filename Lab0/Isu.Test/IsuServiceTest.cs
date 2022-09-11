@@ -69,6 +69,6 @@ public class IsuServicetest
 
         Assert.True(service.FindGroup(groupName2)?.Students.Contains(student), "New group should contain student");
         Assert.False(service.FindGroup(groupName1)?.Students.Contains(student), "Old group shouldn't contain student");
-        Assert.True(service.FindGroup(groupName2) !.GroupName.NameAsString == service.FindStudent(student.Id) !.Group.NameAsString, "Student should contain new group");
+        Assert.True(service.FindGroup(groupName2) !.GroupName.Name == service.FindStudent(student.Id) !.Group.Name, "Student should contain new group");
     }
 }

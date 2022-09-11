@@ -57,7 +57,7 @@ public class IsuService : IIsuService
 
     public Group? FindGroup(GroupName groupName)
     {
-        return _groups.Find(group => group.GroupName.NameAsString == groupName.NameAsString);
+        return _groups.Find(group => group.GroupName.Name == groupName.Name);
     }
 
     public List<Group> FindGroups(CourseNumber courseNumber)
@@ -78,7 +78,7 @@ public class IsuService : IIsuService
         _groups.Find(group => group == newGroup)?
             .AddStudent(new Student(student.Name, newGroup.GroupName, student.Id));
 
-        _groups.Find(group => group.GroupName.NameAsString == student.Group.NameAsString)?
+        _groups.Find(group => group.GroupName.Name == student.Group.Name)?
             .RemoveStudent(student);
     }
 
@@ -87,7 +87,7 @@ public class IsuService : IIsuService
         if (FindGroup(newGroup.GroupName) is null)
             throw new IsuException("Unable to find new group.");
 
-        if (_groups.Find(group => group.GroupName.NameAsString == student.Group.NameAsString)?
+        if (_groups.Find(group => group.GroupName.Name == student.Group.Name)?
                 .FindStudent(student.Id) is null)
             throw new IsuException("Unable to change student's group: Already removed from old group.");
 

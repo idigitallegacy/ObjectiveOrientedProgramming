@@ -14,13 +14,13 @@ public class GroupName
         if (!PossibleFacultyLettersArray.Contains(name[0]))
             throw new IsuException("Invalid group name: must start with M letter");
 
-        NameAsString = name;
+        Name = name;
         FacultyId = Convert.ToString(name[0]) + name[1];
         Course = new CourseNumber(Convert.ToInt32(name[2] - '0'));
         GroupId = Convert.ToInt32(name[3].ToString() + name[4]);
     }
 
-    public string NameAsString { get; }
+    public string Name { get; }
 
     public string FacultyId { get; }
 
