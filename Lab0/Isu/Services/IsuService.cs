@@ -46,13 +46,7 @@ public class IsuService : IIsuService
 
     public List<Student> FindStudents(CourseNumber courseNumber)
     {
-        var students = new List<Student>();
-        _groups.ForEach(group =>
-        {
-            if (group.GroupName.Course == courseNumber)
-                students.AddRange(group.Students);
-        });
-        return students;
+        return FindGroups(courseNumber).SelectMany(group => group.Students).ToList();
     }
 
     public Group? FindGroup(GroupName groupName)
@@ -62,13 +56,7 @@ public class IsuService : IIsuService
 
     public List<Group> FindGroups(CourseNumber courseNumber)
     {
-        var groups = new List<Group>();
-        _groups.ForEach(group =>
-        {
-            if (group.GroupName.Course == courseNumber)
-                groups.Add(group);
-        });
-        return groups;
+        return _groups.Where(group => group.GroupName.Course == courseNumber).ToList();
     }
 
     public void ChangeStudentGroup(Student student, Group newGroup)
