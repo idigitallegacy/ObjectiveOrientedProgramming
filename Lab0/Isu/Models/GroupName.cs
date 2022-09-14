@@ -4,11 +4,12 @@ namespace Isu.Models;
 
 public class GroupName
 {
+    private const int RequiredNameLength = 5;
     private static readonly char[] PossibleFacultyLettersArray = { 'M' };
 
     public GroupName(string name)
     {
-        if (name.Length != 5)
+        if (name.Length != RequiredNameLength)
             throw new IsuException("Invalid group name: it must contain 5 characters.");
 
         if (!PossibleFacultyLettersArray.Contains(name[0]))
