@@ -18,7 +18,7 @@ public class Group
 
     public static bool operator !=(Group group1, Group group2)
     {
-        return group1.GroupName != group2.GroupName;
+        return group1.GroupName.Name != group2.GroupName.Name;
     }
 
     public static bool operator ==(Group group1, Group group2)
