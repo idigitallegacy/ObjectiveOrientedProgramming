@@ -41,7 +41,8 @@ public class IsuService : IIsuService
 
     public List<Student> FindStudents(GroupName groupName)
     {
-        return FindGroup(groupName)?.Students.ToList() ?? throw new IsuException("Group not found");
+        return FindGroup(groupName)?.Students.ToList() ??
+               throw new IsuException("Group not found");
     }
 
     public List<Student> FindStudents(CourseNumber courseNumber)
