@@ -22,7 +22,7 @@ public class IsuService : IIsuService
     public Student AddStudent(Group group, string name)
     {
         var student = new Student(name, group.GroupName, _lastStudentId);
-        _groups.Find(groupIterator => groupIterator == group)?
+        _groups.Find(currentGroup => currentGroup == group)?
             .AddStudent(student);
         _lastStudentId++;
         return student;
