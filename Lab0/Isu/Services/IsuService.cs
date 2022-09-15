@@ -7,7 +7,7 @@ namespace Isu.Services;
 public class IsuService : IIsuService
 {
     private readonly List<Group> _groups = new ();
-    private int _lastStudentId;
+    private int _lastStudentId = 0;
 
     public Group AddGroup(GroupName name)
     {
@@ -36,7 +36,7 @@ public class IsuService : IIsuService
 
     public Student? FindStudent(int id)
     {
-        return _groups.Find(group => group.FindStudent(id) is not null)?.GetStudent(id);
+        return _groups.SelectMany(group => group.Students).FirstOrDefault(student => student.Id == id);
     }
 
     public List<Student> FindStudents(GroupName groupName)
@@ -76,12 +76,15 @@ public class IsuService : IIsuService
         if (FindGroup(newGroup.GroupName) is null)
             throw new IsuException("Unable to find new group.");
 
-        if (_groups.Find(group => group.GroupName.Name == student.Group.Name)?
-                .FindStudent(student.Id) is null)
+        Student? serviceStoredStudent = FindStudent(student.Id);
+
+        if (serviceStoredStudent is null)
+            throw new IsuException("Unable to change student's group: Student not found at IsuService.");
+
+        if (serviceStoredStudent.Group != student.Group)
             throw new IsuException("Unable to change student's group: Already removed from old group.");
 
-        if (_groups.Find(group => group == newGroup)?
-                .FindStudent(student.Id) is not null)
+        if (serviceStoredStudent.Group == newGroup.GroupName)
             throw new IsuException("Unable to change student's group: Already exists at the new group.");
     }
 }

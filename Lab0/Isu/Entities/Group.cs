@@ -43,17 +43,6 @@ public class Group
             throw new IsuException("Student not found.");
     }
 
-    public Student GetStudent(int id)
-    {
-        return FindStudent(id) ??
-               throw new IsuException($"Unable to get student {id} at group {GroupName}.");
-    }
-
-    public Student? FindStudent(int id)
-    {
-        return _students.Find(student => student.Id == id);
-    }
-
     public override bool Equals(object? obj)
     {
         if (obj is Group) return (Group)obj == this;
