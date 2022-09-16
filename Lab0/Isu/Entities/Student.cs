@@ -4,7 +4,7 @@ namespace Isu.Entities;
 
 public class Student
 {
-    public Student(string name, GroupName group, int id)
+    public Student(string name, Group group, int id)
     {
         Name = name;
         Group = group;
@@ -12,7 +12,7 @@ public class Student
     }
 
     public string Name { get; }
-    public GroupName Group { get; }
+    public Group Group { get; private set; }
     public int Id { get; }
 
     public static bool operator !=(Student student1, Student student2)
@@ -23,6 +23,13 @@ public class Student
     public static bool operator ==(Student student1, Student student2)
     {
         return student1.Id == student2.Id;
+    }
+
+    public void ChangeGroup(Group newGroup)
+    {
+        Group.RemoveStudent(this);
+        newGroup.AddStudent(this);
+        Group = newGroup;
     }
 
     public override bool Equals(object? obj)

@@ -21,9 +21,13 @@ public class IsuService : IIsuService
 
     public Student AddStudent(Group group, string name)
     {
-        var student = new Student(name, group.GroupName, _lastStudentId);
-        _groups.Find(currentGroup => currentGroup == group)?
-            .AddStudent(student);
+        var student = new Student(name, group, _lastStudentId);
+
+        Group? needleGroup = _groups.Find(currentGroup => currentGroup == group);
+        if (needleGroup is null)
+            throw new IsuException("Unable to add student: group not found.");
+
+        needleGroup.AddStudent(student);
         _lastStudentId++;
         return student;
     }
@@ -63,12 +67,7 @@ public class IsuService : IIsuService
     public void ChangeStudentGroup(Student student, Group newGroup)
     {
         ValidateGroupChange(student, newGroup);
-
-        _groups.Find(group => group == newGroup)?
-            .AddStudent(new Student(student.Name, newGroup.GroupName, student.Id));
-
-        _groups.Find(group => group.GroupName.Name == student.Group.Name)?
-            .RemoveStudent(student);
+        student.ChangeGroup(newGroup);
     }
 
     private void ValidateGroupChange(Student student, Group newGroup)
@@ -84,7 +83,7 @@ public class IsuService : IIsuService
         if (serviceStoredStudent.Group != student.Group)
             throw new IsuException("Unable to change student's group: Already removed from old group.");
 
-        if (serviceStoredStudent.Group == newGroup.GroupName)
+        if (serviceStoredStudent.Group == newGroup)
             throw new IsuException("Unable to change student's group: Already exists at the new group.");
     }
 }
