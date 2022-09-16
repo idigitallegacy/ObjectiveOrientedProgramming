@@ -1,3 +1,4 @@
+using Isu.Exceptions;
 using Isu.Models;
 
 namespace Isu.Entities;
@@ -27,8 +28,8 @@ public class Student
 
     public void ChangeGroup(Group newGroup)
     {
-        Group.RemoveStudent(this);
         newGroup.AddStudent(this);
+        Group.RemoveStudent(this);
         Group = newGroup;
     }
 
