@@ -34,7 +34,7 @@ public class ShopService
 
     public Shop? FindCheapestShopToBuy(Product product)
     {
-        var availableShops = _shops
+        List<Shop> availableShops = _shops
             .FindAll(shop => shop.FindProduct(product) is not null);
 
         if (availableShops.Count == 0)
