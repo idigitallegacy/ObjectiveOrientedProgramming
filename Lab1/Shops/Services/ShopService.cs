@@ -15,7 +15,7 @@ public class ShopService
         return shop;
     }
 
-    public Product RegisterProduct(string name, float price, int amount)
+    public Product RegisterProduct(string name, int price, int amount)
     {
         return new Product(name, new Price(price), amount);
     }
@@ -26,7 +26,7 @@ public class ShopService
             shop.AddProducts(products);
     }
 
-    public void ChangePrice(Shop shop, Product product, float newPrice)
+    public void ChangePrice(Shop shop, Product product, int newPrice)
     {
         if (ValidateShop(shop))
             shop.ChangePrice(product, newPrice);

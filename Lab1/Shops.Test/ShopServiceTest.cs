@@ -15,10 +15,10 @@ public class ShopServiceTest
         var shopService = new ShopService();
 
         const string productName = "Product #1";
-        const float productPrice = 10.5f;
+        const int productPrice = 10;
         const int productAmount = 100;
 
-        const float moneyBefore = 500f;
+        const int moneyBefore = 500;
         const int preferredAmount = 20;
 
         const string shopName = "Shop #1";
@@ -28,7 +28,7 @@ public class ShopServiceTest
         var product = shopService.RegisterProduct(productName, productPrice, productAmount);
         var productList = new List<Product>();
         productList.Add(product);
-        person.TakeMoney(moneyBefore);
+        person.GiveMoney(moneyBefore);
 
         shopService.AddProducts(shop, productList);
 
@@ -45,11 +45,11 @@ public class ShopServiceTest
         var shopService = new ShopService();
 
         const string productName = "Product #1";
-        const float productPrice = 10.5f;
+        const int productPrice = 10;
         const int productAmount = 100;
 
-        const float moneyBefore = 500f;
-        const float newPrice = 20;
+        const int moneyBefore = 50;
+        const int newPrice = 20;
 
         const string shop1Name = "Shop #1";
         const string shop2Name = "Shop #1";
@@ -60,7 +60,7 @@ public class ShopServiceTest
         var product = shopService.RegisterProduct(productName, productPrice, productAmount);
         var productList = new List<Product>();
         productList.Add(product);
-        person.TakeMoney(moneyBefore);
+        person.GiveMoney(moneyBefore);
 
         shopService.AddProducts(shop1, productList);
         shopService.AddProducts(shop2, productList);
@@ -75,156 +75,139 @@ public class ShopServiceTest
     [Fact]
     public void SearchCheapestShop_ShopFound()
     {
+        const int productNamesAmount = 6;
+        const int productsToBuyAmount = 3;
+        const int productAmount = 100;
+
+        var shopsAmount = 3;
+        const string shopAddress = "abc,49";
+
+        const int moneyBefore = 50;
+        const int preferredAmount = 10;
+
+        var productNames = new List<string>();
+        var prices = new List<int>();
+        var products = new List<Product>();
+
+        var shopNames = new List<string>();
+        var shops = new List<Shop>();
+
         var person = new Person("Michael");
         var shopService = new ShopService();
 
-        const string product1Name = "Product #1";
-        const string product2Name = "Product #2";
-        const string product3Name = "Product #3";
-        const string product4Name = "Product #4";
-        const string product5Name = "Product #5";
-        const string product6Name = "Product #6";
-        const float price1 = 10f;
-        const float price2 = 20f;
-        const float price3 = 30f;
-        const float price4 = 40f;
-        const float price5 = 50f;
-        const float price6 = 60f;
-        const int productAmount = 100;
-
-        const float moneyBefore = 500f;
-        const int preferredAmount = 10;
-
-        const string shop1Name = "Shop #1";
-        const string shop2Name = "Shop #2";
-        const string shop3Name = "Shop #3";
-        const string shopAddress = "abc,49";
-
-        var shop1 = shopService.RegisterShop(shop1Name, shopAddress);
-        var shop2 = shopService.RegisterShop(shop2Name, shopAddress);
-        var shop3 = shopService.RegisterShop(shop3Name, shopAddress);
-
-        var product1 = shopService.RegisterProduct(product1Name, price1, productAmount);
-        var product2 = shopService.RegisterProduct(product2Name, price2, productAmount);
-        var product3 = shopService.RegisterProduct(product3Name, price3, productAmount);
-        var product4 = shopService.RegisterProduct(product4Name, price4, productAmount);
-        var product5 = shopService.RegisterProduct(product5Name, price5, productAmount);
-        var product6 = shopService.RegisterProduct(product6Name, price6, productAmount);
-
         var productListFull = new List<Product>();
-        productListFull.Add(product1);
-        productListFull.Add(product2);
-        productListFull.Add(product3);
-        productListFull.Add(product4);
-        productListFull.Add(product5);
-        productListFull.Add(product6);
-        person.TakeMoney(moneyBefore);
-
         var listToBuy = new List<ItemToBuy>();
-        listToBuy.Add(new ItemToBuy(product1, preferredAmount));
-        listToBuy.Add(new ItemToBuy(product2, preferredAmount));
-        listToBuy.Add(new ItemToBuy(product3, preferredAmount));
 
-        shopService.AddProducts(shop1, productListFull);
-        shopService.AddProducts(shop2, productListFull);
-        shopService.AddProducts(shop3, productListFull);
+        for (int productName = 0; productName < productNamesAmount; productName++)
+            productNames.Add($"Product #{productName}");
 
-        shopService.ChangePrice(shop1, product1, price2);
-        shopService.ChangePrice(shop1, product2, price2);
-        shopService.ChangePrice(shop1, product3, price2);
+        for (int price = 1; price < productNamesAmount + 1; price++)
+            prices.Add(price);
 
-        shopService.ChangePrice(shop2, product1, price3);
-        shopService.ChangePrice(shop2, product2, price3);
-        shopService.ChangePrice(shop2, product3, price3);
+        for (int shopName = 0; shopName < shopsAmount; shopName++)
+            shopNames.Add($"Shop #{shopName}");
 
+        foreach (var shopName in shopNames)
+            shops.Add(shopService.RegisterShop(shopName, shopAddress));
+
+        for (int i = 0; i < productNamesAmount; i++)
+            products.Add(shopService.RegisterProduct(productNames[i], prices[i], productAmount));
+
+        for (var i = 0; i < productNamesAmount; i++)
+            productListFull.Add(products[i]);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+            listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
+
+        for (var i = 0; i < shopsAmount; i++)
+            shopService.AddProducts(shops[i], productListFull);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+            shopService.ChangePrice(shops[0], products[i], prices[1]);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+            shopService.ChangePrice(shops[1], products[i], prices[2]);
+
+        person.GiveMoney(moneyBefore);
         var foundShop = shopService.FindCheapestShopToBuy(listToBuy);
 
-        Assert.Equal(shop1.Id, foundShop?.Id);
+        Assert.Equal(shops[0].Id, foundShop?.Id);
 
-        shopService.ChangePrice(shop3, product1, price1);
-        shopService.ChangePrice(shop3, product2, price1);
-        shopService.ChangePrice(shop3, product3, price1);
+        for (var i = 0; i < productsToBuyAmount; i++)
+            shopService.ChangePrice(shops[2], products[i], prices[0]);
 
         foundShop = shopService.FindCheapestShopToBuy(listToBuy);
 
-        Assert.Equal(shop3.Id, foundShop?.Id);
+        Assert.Equal(shops[2].Id, foundShop?.Id);
     }
 
     [Fact]
     public void SearchCheapestShop_SomeShopsHaveNotGotEnoughProducts()
     {
+        const int productNamesAmount = 6;
+        const int productsToBuyAmount = 3;
+        const int productAmount = 50;
+
+        var shopsAmount = 3;
+        const string shopAddress = "abc,49";
+
+        const int moneyBefore = 5000;
+
+        const int preferredAmount = 30;
+
+        var productNames = new List<string>();
+        var prices = new List<int>();
+        var products = new List<Product>();
+
+        var shopNames = new List<string>();
+        var shops = new List<Shop>();
+
         var person = new Person("Michael");
         var shopService = new ShopService();
 
-        const string product1Name = "Product #1";
-        const string product2Name = "Product #2";
-        const string product3Name = "Product #3";
-        const string product4Name = "Product #4";
-        const string product5Name = "Product #5";
-        const string product6Name = "Product #6";
-        const float price1 = 10f;
-        const float price2 = 20f;
-        const float price3 = 30f;
-        const float price4 = 40f;
-        const float price5 = 50f;
-        const float price6 = 60f;
-        const int productAmount = 30;
-
-        const float moneyBefore = 50000f;
-        const int preferredAmount1 = 10;
-        const int preferredAmount2 = 20;
-        const int preferredAmount3 = 30;
-
-        const string shop1Name = "Shop #1";
-        const string shop2Name = "Shop #2";
-        const string shop3Name = "Shop #3";
-        const string shopAddress = "abc,49";
-
-        var shop1 = shopService.RegisterShop(shop1Name, shopAddress);
-        var shop2 = shopService.RegisterShop(shop2Name, shopAddress);
-        var shop3 = shopService.RegisterShop(shop3Name, shopAddress);
-
-        var product1 = shopService.RegisterProduct(product1Name, price1, productAmount);
-        var product2 = shopService.RegisterProduct(product2Name, price2, productAmount);
-        var product3 = shopService.RegisterProduct(product3Name, price3, productAmount);
-        var product4 = shopService.RegisterProduct(product4Name, price4, productAmount);
-        var product5 = shopService.RegisterProduct(product5Name, price5, productAmount);
-        var product6 = shopService.RegisterProduct(product6Name, price6, productAmount);
-
         var productListFull = new List<Product>();
-        productListFull.Add(product1);
-        productListFull.Add(product2);
-        productListFull.Add(product3);
-        productListFull.Add(product4);
-        productListFull.Add(product5);
-        productListFull.Add(product6);
-        person.TakeMoney(moneyBefore);
-
         var listToBuy = new List<ItemToBuy>();
-        listToBuy.Add(new ItemToBuy(product1, preferredAmount3));
-        listToBuy.Add(new ItemToBuy(product2, preferredAmount3));
-        listToBuy.Add(new ItemToBuy(product3, preferredAmount3));
 
-        shopService.AddProducts(shop1, productListFull);
-        shopService.AddProducts(shop2, productListFull);
-        shopService.AddProducts(shop3, productListFull);
+        for (int productName = 0; productName < productNamesAmount; productName++)
+            productNames.Add($"Product #{productName}");
 
-        shop1.BuyProduct(person, product1, preferredAmount1);
-        shop2.BuyProduct(person, product2, preferredAmount2);
+        for (int price = 1; price < productNamesAmount + 1; price++)
+            prices.Add(price);
 
-        shopService.ChangePrice(shop1, product1, price1);
-        shopService.ChangePrice(shop1, product2, price1);
-        shopService.ChangePrice(shop1, product3, price1);
+        for (int shopName = 0; shopName < shopsAmount; shopName++)
+            shopNames.Add($"Shop #{shopName}");
 
-        shopService.ChangePrice(shop2, product1, price1);
-        shopService.ChangePrice(shop2, product2, price1);
-        shopService.ChangePrice(shop2, product3, price1);
+        foreach (var shopName in shopNames)
+            shops.Add(shopService.RegisterShop(shopName, shopAddress));
+
+        for (int i = 0; i < productNamesAmount; i++)
+            products.Add(shopService.RegisterProduct(productNames[i], prices[i], productAmount));
+
+        for (var i = 0; i < productNamesAmount; i++)
+            productListFull.Add(products[i]);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+            listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
+
+        for (var i = 0; i < shopsAmount; i++)
+            shopService.AddProducts(shops[i], productListFull);
+
+        person.GiveMoney(moneyBefore);
+
+        shops[0].BuyProduct(person, products[0], preferredAmount);
+        shops[1].BuyProduct(person, products[0], preferredAmount);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+            shopService.ChangePrice(shops[0], products[i], prices[3]);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+            shopService.ChangePrice(shops[2], products[i], prices[1]);
 
         var foundShop = shopService.FindCheapestShopToBuy(listToBuy);
 
-        Assert.Equal(shop3.Id, foundShop?.Id);
+        Assert.Equal(shops[2].Id, foundShop?.Id);
 
-        shop3.BuyProduct(person, product1, preferredAmount1);
+        shops[2].BuyProduct(person, products[0], preferredAmount);
         foundShop = shopService.FindCheapestShopToBuy(listToBuy);
 
         Assert.Null(foundShop);
@@ -233,73 +216,57 @@ public class ShopServiceTest
     [Fact]
     public void BuyMultipleProducts_NotEnoughMoneyOrProducts()
     {
-        var person = new Person("Michael");
-        var shopService = new ShopService();
-
-        const string product1Name = "Product #1";
-        const string product2Name = "Product #2";
-        const string product3Name = "Product #3";
-        const string product4Name = "Product #4";
-        const string product5Name = "Product #5";
-        const string product6Name = "Product #6";
-        const float price1 = 10f;
-        const float price2 = 20f;
-        const float price3 = 30f;
-        const float price4 = 40f;
-        const float price5 = 50f;
-        const float price6 = 60f;
+        const int productNamesAmount = 6;
+        const int productsToBuyAmount = 3;
         const int productAmount = 30;
+        const int shopsAmount = 3;
+        const int price = 100;
 
-        const float moneyBefore = 1000f;
+        const string shopAddress = "abc,49";
+
+        const int moneyBefore = 4000;
+
         const int preferredAmount1 = 10;
         const int preferredAmount2 = 30;
 
-        const string shop1Name = "Shop #1";
-        const string shop2Name = "Shop #2";
-        const string shop3Name = "Shop #3";
-        const string shopAddress = "abc,49";
+        var productNames = new List<string>();
+        var products = new List<Product>();
 
-        var shop1 = shopService.RegisterShop(shop1Name, shopAddress);
-        var shop2 = shopService.RegisterShop(shop2Name, shopAddress);
-        var shop3 = shopService.RegisterShop(shop3Name, shopAddress);
+        var shopNames = new List<string>();
+        var shops = new List<Shop>();
 
-        var product1 = shopService.RegisterProduct(product1Name, price1, productAmount);
-        var product2 = shopService.RegisterProduct(product2Name, price2, productAmount);
-        var product3 = shopService.RegisterProduct(product3Name, price3, productAmount);
-        var product4 = shopService.RegisterProduct(product4Name, price4, productAmount);
-        var product5 = shopService.RegisterProduct(product5Name, price5, productAmount);
-        var product6 = shopService.RegisterProduct(product6Name, price6, productAmount);
+        var person = new Person("Michael");
+        var shopService = new ShopService();
 
         var productListFull = new List<Product>();
-        productListFull.Add(product1);
-        productListFull.Add(product2);
-        productListFull.Add(product3);
-        productListFull.Add(product4);
-        productListFull.Add(product5);
-        productListFull.Add(product6);
-        person.TakeMoney(moneyBefore);
-
         var incorrectListToBuy = new List<ItemToBuy>();
-        incorrectListToBuy.Add(new ItemToBuy(product1, preferredAmount2));
-        incorrectListToBuy.Add(new ItemToBuy(product2, preferredAmount2));
-        incorrectListToBuy.Add(new ItemToBuy(product3, preferredAmount2));
-
         var correctListToBuy = new List<ItemToBuy>();
-        correctListToBuy.Add(new ItemToBuy(product1, preferredAmount1));
-        correctListToBuy.Add(new ItemToBuy(product2, preferredAmount1));
-        correctListToBuy.Add(new ItemToBuy(product3, preferredAmount1));
 
-        shopService.AddProducts(shop1, productListFull);
-        shopService.AddProducts(shop2, productListFull);
-        shopService.AddProducts(shop3, productListFull);
+        for (int productName = 0; productName < productNamesAmount; productName++)
+            productNames.Add($"Product #{productName}");
 
-        shopService.ChangePrice(shop1, product1, price1);
-        shopService.ChangePrice(shop1, product2, price1);
-        shopService.ChangePrice(shop1, product3, price1);
+        for (int shopName = 0; shopName < shopsAmount; shopName++)
+            shopNames.Add($"Shop #{shopName}");
 
-        shopService.ChangePrice(shop2, product1, price1);
-        shopService.ChangePrice(shop2, product2, price1);
-        shopService.ChangePrice(shop2, product3, price1);
+        foreach (var shopName in shopNames)
+            shops.Add(shopService.RegisterShop(shopName, shopAddress));
+
+        for (int i = 0; i < productNamesAmount; i++)
+            products.Add(shopService.RegisterProduct(productNames[i], price, productAmount));
+
+        for (var i = 0; i < productNamesAmount; i++)
+            productListFull.Add(products[i]);
+
+        for (var i = 0; i < productsToBuyAmount; i++)
+        {
+            correctListToBuy.Add(new ItemToBuy(products[i], preferredAmount1));
+            incorrectListToBuy.Add(new ItemToBuy(products[i], preferredAmount2));
+        }
+
+        for (var i = 0; i < shopsAmount; i++)
+            shopService.AddProducts(shops[i], productListFull);
+
+        person.GiveMoney(moneyBefore);
 
         var foundShop = shopService.FindCheapestShopToBuy(incorrectListToBuy);
         var ex = Assert.Throws<ShopException>(() => foundShop?.BuyProducts(person, incorrectListToBuy));
@@ -308,12 +275,12 @@ public class ShopServiceTest
         foundShop = shopService.FindCheapestShopToBuy(correctListToBuy);
         foundShop?.BuyProducts(person, correctListToBuy);
         Assert.Equal(moneyBefore - correctListToBuy.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum(), person.Balance);
-        Assert.Equal(productAmount - preferredAmount1, foundShop !.GetProduct(product1).Amount.Value);
-        Assert.Equal(productAmount - preferredAmount1, foundShop !.GetProduct(product2).Amount.Value);
-        Assert.Equal(productAmount - preferredAmount1, foundShop !.GetProduct(product3).Amount.Value);
+        Assert.Equal(productAmount - preferredAmount1, foundShop?.GetProduct(products[0]).Amount.Value);
+        Assert.Equal(productAmount - preferredAmount1, foundShop?.GetProduct(products[1]).Amount.Value);
+        Assert.Equal(productAmount - preferredAmount1, foundShop?.GetProduct(products[2]).Amount.Value);
 
-        person.TakeMoney(500f);
-        ex = Assert.Throws<ShopException>(() => shop1.BuyProduct(person, product1, preferredAmount2));
+        person.GiveMoney(5000);
+        ex = Assert.Throws<ShopException>(() => shops[0].BuyProduct(person, products[0], preferredAmount2));
         Assert.Equal("Unable to buy multiple products: one or more product is not enough at store.", ex.Message);
     }
 }

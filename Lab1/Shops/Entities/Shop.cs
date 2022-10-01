@@ -25,7 +25,7 @@ public class Shop
         _products.AddRange(products.Select(product => new Product(product.Name, product.Price, product.Amount.Value)));
     }
 
-    public void ChangePrice(Product product, float newPrice)
+    public void ChangePrice(Product product, int newPrice)
     {
         Product? needleProduct = FindProduct(product);
         if (needleProduct is null)
@@ -49,7 +49,7 @@ public class Shop
     {
         if (ValidateSell(person, buyList))
         {
-            float cost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
+            int cost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
             GetMoney(person, cost);
             ExecuteSell(buyList);
         }
@@ -87,16 +87,16 @@ public class Shop
         if (buyList.Any(item => item.Product.Amount.Value < item.PreferredAmount))
             throw new ShopException("Unable to buy multiple products: one or more product is not enough at store.");
 
-        float requestedCost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
+        int requestedCost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
         if (toPerson.Balance < requestedCost)
             throw new ShopException($"Unable to buy products: not enough money.");
 
         return true;
     }
 
-    private void GetMoney(Person person, float amount)
+    private void GetMoney(Person person, int amount)
     {
-        person.GiveMoney(amount);
+        person.TakeMoney(amount);
     }
 
     private void ExecuteSell(List<ItemToBuy> buyList)

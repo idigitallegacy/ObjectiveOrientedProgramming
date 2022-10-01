@@ -4,15 +4,13 @@ namespace Shops.Models;
 
 public class Price
 {
-    private float _value;
-    public Price(float price)
+    private int _value;
+    public Price(int price)
     {
-        if (price < 0)
-            throw new PriceException("Price mustn't be negative.");
-        _value = price;
+        Value = price;
     }
 
-    public float Value
+    public int Value
     {
         get
         {
