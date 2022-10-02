@@ -281,6 +281,6 @@ public class ShopServiceTest
 
         person.GiveMoney(5000);
         ex = Assert.Throws<ShopException>(() => shops[0].BuyProduct(person, products[0], preferredAmount2));
-        Assert.Equal("Unable to buy multiple products: one or more product is not enough at store.", ex.Message);
+        Assert.Equal($"Unable to buy product {products[0].Name}: it is not enough at store.", ex.Message);
     }
 }

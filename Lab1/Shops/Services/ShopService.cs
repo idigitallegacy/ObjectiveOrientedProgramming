@@ -32,29 +32,9 @@ public class ShopService
             shop.ChangePrice(product, newPrice);
     }
 
-    public Shop? FindCheapestShopToBuy(Product product)
-    {
-        List<Shop> availableShops = _shops
-            .FindAll(shop => shop.FindProduct(product) is not null);
-
-        if (availableShops.Count == 0)
-            return null;
-
-        var orderedShops = availableShops
-            .Select((shop) => new { shop, product = shop.GetProduct(product) })
-            .OrderBy(item => item.product.Price.Value);
-        return orderedShops.First().shop;
-    }
-
     public Shop? FindCheapestShopToBuy(List<ItemToBuy> buyList)
     {
-        List<Shop> availableShops = _shops
-            .FindAll(shop => buyList.TrueForAll(itemToBuy =>
-            {
-                Product? product = shop.FindProduct(itemToBuy.Product);
-                return product is not null &&
-                       product.Amount.Value >= itemToBuy.PreferredAmount;
-            }));
+        List<Shop> availableShops = FindAvailableShops(buyList);
 
         if (availableShops.Count == 0)
             return null;
@@ -70,10 +50,25 @@ public class ShopService
         return orderedShops.First().shop;
     }
 
+    public Shop? FindCheapestShopToBuy(Product product, int preferredAmount)
+    {
+        List<ItemToBuy> singleItemList = new List<ItemToBuy> { new (product, preferredAmount) };
+        return FindCheapestShopToBuy(singleItemList);
+    }
+
     private bool ValidateShop(Shop shop)
     {
         if (_shops.Find(shopItem => shopItem == shop) is null)
             throw new ShopServiceException("Unable to add products: shop not found.");
         return true;
+    }
+
+    private List<Shop> FindAvailableShops(List<ItemToBuy> buyList)
+    {
+        return _shops.FindAll(shop => buyList.TrueForAll(item =>
+        {
+            Product? product = shop.FindProduct(item.Product);
+            return product is not null && item.PreferredAmount <= product.Amount.Value;
+        }));
     }
 }

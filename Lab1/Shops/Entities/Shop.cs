@@ -35,24 +35,20 @@ public class Shop
 
     public void BuyProduct(Person person, Product product, int preferredAmount)
     {
-        List<ItemToBuy> buyList = new ();
-        buyList.Add(new ItemToBuy(GetProduct(product), preferredAmount));
-
-        if (ValidateSell(person, buyList))
-        {
-            GetMoney(person, product.Price.Value * preferredAmount);
-            ExecuteSell(buyList);
-        }
+        ItemToBuy item = new ItemToBuy(product, preferredAmount);
+        ValidateSell(person, item);
+        GetMoney(person, product.Price.Value * preferredAmount);
+        ExecuteSell(item);
     }
 
     public void BuyProducts(Person person, List<ItemToBuy> buyList)
     {
-        if (ValidateSell(person, buyList))
-        {
-            int cost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
-            GetMoney(person, cost);
-            ExecuteSell(buyList);
-        }
+        buyList.ForEach(item => ValidateSell(person, item));
+        int cost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
+        if (person.Balance < cost)
+            throw new ShopException($"Unable to buy products: not enough money.");
+        GetMoney(person, cost);
+        buyList.ForEach(item => ExecuteSell(item));
     }
 
     public Product? FindProduct(Product needleProduct)
@@ -79,19 +75,17 @@ public class Shop
         return new Price(buyList.Select(item => GetProduct(item.Product).Price.Value * item.PreferredAmount).Sum());
     }
 
-    private bool ValidateSell(Person toPerson, List<ItemToBuy> buyList)
+    private void ValidateSell(Person person, ItemToBuy item)
     {
-        if (buyList.Any(item => FindProduct(item.Product) is null))
-            throw new ShopException("Unable to buy multiple products: one or more product is not found at store.");
+        Product? product = FindProduct(item.Product);
+        if (product is null)
+            throw new ShopException($"Unable to buy product {item.Product.Name}: it is not found at store.");
 
-        if (buyList.Any(item => item.Product.Amount.Value < item.PreferredAmount))
-            throw new ShopException("Unable to buy multiple products: one or more product is not enough at store.");
+        if (product.Amount.Value < item.PreferredAmount)
+            throw new ShopException($"Unable to buy product {item.Product.Name}: it is not enough at store.");
 
-        int requestedCost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
-        if (toPerson.Balance < requestedCost)
-            throw new ShopException($"Unable to buy products: not enough money.");
-
-        return true;
+        if (person.Balance < item.PreferredAmount * product.Price.Value)
+            throw new ShopException($"Unable to buy product {item.Product.Name}: not enough money.");
     }
 
     private void GetMoney(Person person, int amount)
@@ -99,8 +93,8 @@ public class Shop
         person.TakeMoney(amount);
     }
 
-    private void ExecuteSell(List<ItemToBuy> buyList)
+    private void ExecuteSell(ItemToBuy item)
     {
-        buyList.ForEach(item => { GetProduct(item.Product).Amount.Value -= item.PreferredAmount; });
+        GetProduct(item.Product).Amount.Value -= item.PreferredAmount;
     }
 }
