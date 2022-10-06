@@ -21,11 +21,10 @@ public class Shop
 
     public void AddProducts(List<Product> products)
     {
-        // new Product(...) is to keep different prices and amounts around all shops
         _products.AddRange(products.Select(product => new Product(product.Name, product.Price, product.Amount.Value)));
     }
 
-    public void ChangePrice(Product product, int newPrice)
+    public void ChangePrice(Product product, decimal newPrice)
     {
         Product? needleProduct = FindProduct(product);
         if (needleProduct is null)
