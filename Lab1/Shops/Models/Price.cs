@@ -4,13 +4,13 @@ namespace Shops.Models;
 
 public class Price
 {
-    private int _value;
-    public Price(int price)
+    private decimal _value;
+    public Price(decimal price)
     {
         Value = price;
     }
 
-    public int Value
+    public decimal Value
     {
         get
         {

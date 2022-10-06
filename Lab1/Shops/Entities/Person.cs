@@ -14,11 +14,11 @@ public class Person
 
     public string Name { get; }
 
-    public int Balance { get; private set; }
+    public decimal Balance { get; private set; }
 
-    public void GiveMoney(int amount) { Balance += amount; }
+    public void GiveMoney(decimal amount) { Balance += amount; }
 
-    public void TakeMoney(int amount)
+    public void TakeMoney(decimal amount)
     {
         if (Balance < amount)
             throw new BalanceException("Not enough money to give");

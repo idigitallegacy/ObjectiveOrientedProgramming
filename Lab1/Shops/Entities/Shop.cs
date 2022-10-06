@@ -44,7 +44,7 @@ public class Shop
     public void BuyProducts(Person person, List<ItemToBuy> buyList)
     {
         buyList.ForEach(item => ValidateSell(person, item));
-        int cost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
+        decimal cost = buyList.Select(item => item.Product.Price.Value * item.PreferredAmount).Sum();
         if (person.Balance < cost)
             throw new ShopException($"Unable to buy products: not enough money.");
         GetMoney(person, cost);
@@ -88,7 +88,7 @@ public class Shop
             throw new ShopException($"Unable to buy product {item.Product.Name}: not enough money.");
     }
 
-    private void GetMoney(Person person, int amount)
+    private void GetMoney(Person person, decimal amount)
     {
         person.TakeMoney(amount);
     }
