@@ -7,6 +7,8 @@ public class Person
 {
     public Person(string name)
     {
+        if (string.IsNullOrEmpty(name))
+            throw new PersonException("Invalid person name");
         Name = name;
     }
 
