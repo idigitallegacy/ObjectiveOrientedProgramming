@@ -5,7 +5,7 @@ namespace Shops.Entities;
 
 public class Shop
 {
-    private List<Product> _products = new ();
+    private List<ShopProduct> _products = new ();
 
     public Shop(string name, string address, Guid id)
     {
@@ -21,15 +21,15 @@ public class Shop
 
     public void AddProducts(List<Product> products)
     {
-        _products.AddRange(products.Select(product => new Product(product.Name, product.Price, product.Amount.Value)));
+        _products.AddRange(products.Select(product => new ShopProduct(product.Name, product.Price, product.Amount.Value)));
     }
 
-    public void ChangePrice(Product product, decimal newPrice)
+    public void ChangePrice(Product shopProduct, decimal newPrice)
     {
-        Product? needleProduct = FindProduct(product);
+        ShopProduct? needleProduct = FindShopProduct(shopProduct);
         if (needleProduct is null)
-            throw new ShopException($"Unable to change price for {product.Name}: it's not presented at shop.");
-        needleProduct.Price = new Price(newPrice);
+            throw new ShopException($"Unable to change price for {shopProduct.Name}: it's not presented at shop.");
+        needleProduct.Properties.Price = new Price(newPrice);
     }
 
     public void BuyProduct(Person person, Product product, int preferredAmount)
@@ -55,9 +55,9 @@ public class Shop
         return _products.Find(product => product.Name == needleProduct.Name);
     }
 
-    public Product GetProduct(Product needleProduct)
+    public Product GetProduct(Product needleShopProduct)
     {
-        return FindProduct(needleProduct) ??
+        return FindProduct(needleShopProduct) ??
                throw new ShopException("Unable to get product: it's not at store.");
     }
 
@@ -94,6 +94,17 @@ public class Shop
 
     private void ExecuteSell(ItemToBuy item)
     {
-        GetProduct(item.Product).Amount.Value -= item.PreferredAmount;
+        GetShopProduct(item.Product).Properties.Amount.Value -= item.PreferredAmount;
+    }
+
+    private ShopProduct? FindShopProduct(Product needleProduct)
+    {
+        return _products.Find(product => product.Name == needleProduct.Name);
+    }
+
+    private ShopProduct GetShopProduct(Product needleShopProduct)
+    {
+        return FindShopProduct(needleShopProduct) ??
+               throw new ShopException("Unable to get product: it's not at store.");
     }
 }

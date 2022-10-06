@@ -1,17 +1,19 @@
+using Shops.Exceptions;
+
 namespace Shops.Models;
 
 public class Product
 {
-    public Product(string name, Price price, int amount)
+    public Product(ProductProperties properties)
     {
-        Name = name;
-        Price = price;
-        Amount = new ProductAmount(amount);
+        Properties = properties;
     }
 
-    public string Name { get; }
+    public string Name { get => Properties.Name; }
 
-    public Price Price { get; set; }
+    public Price Price { get => Properties.Price; }
 
-    public ProductAmount Amount { get; set; }
+    public ProductAmount Amount { get => Properties.Amount; }
+
+    protected ProductProperties Properties { get; }
 }

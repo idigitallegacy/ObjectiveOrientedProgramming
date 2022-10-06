@@ -15,9 +15,9 @@ public class ShopService
         return shop;
     }
 
-    public Product RegisterProduct(string name, int price, int amount)
+    public ShopProduct RegisterProduct(string name, int price, int amount)
     {
-        return new Product(name, new Price(price), amount);
+        return new ShopProduct(name, new Price(price), amount);
     }
 
     public void AddProducts(Shop shop, List<Product> products)
@@ -26,10 +26,10 @@ public class ShopService
             shop.AddProducts(products);
     }
 
-    public void ChangePrice(Shop shop, Product product, int newPrice)
+    public void ChangePrice(Shop shop, Product shopProduct, int newPrice)
     {
         if (ValidateShop(shop))
-            shop.ChangePrice(product, newPrice);
+            shop.ChangePrice(shopProduct, newPrice);
     }
 
     public Shop? FindCheapestShopToBuy(List<ItemToBuy> buyList)
@@ -50,9 +50,9 @@ public class ShopService
         return orderedShops.First().shop;
     }
 
-    public Shop? FindCheapestShopToBuy(Product product, int preferredAmount)
+    public Shop? FindCheapestShopToBuy(ShopProduct shopProduct, int preferredAmount)
     {
-        List<ItemToBuy> singleItemList = new List<ItemToBuy> { new (product, preferredAmount) };
+        List<ItemToBuy> singleItemList = new List<ItemToBuy> { new (shopProduct, preferredAmount) };
         return FindCheapestShopToBuy(singleItemList);
     }
 
