@@ -214,11 +214,9 @@ public class ShopServiceTest
         for (var i = 0; i < productsToBuyAmount; i++)
             listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
 
+        supplyBuilder.Build(requestList);
         for (var i = 0; i < shopsAmount; i++)
-        {
-            supplyBuilder.Build(requestList);
             shopService.AddProducts(shops[i], supplyBuilder.Supply);
-        }
 
         person.GiveMoney(moneyBefore);
 
@@ -299,11 +297,9 @@ public class ShopServiceTest
             incorrectListToBuy.Add(new ItemToBuy(products[i], preferredAmount2));
         }
 
+        supplyBuilder.Build(requestList);
         for (var i = 0; i < shopsAmount; i++)
-        {
-            supplyBuilder.Build(requestList);
             shopService.AddProducts(shops[i], supplyBuilder.Supply);
-        }
 
         person.GiveMoney(moneyBefore);
 
