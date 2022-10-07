@@ -7,7 +7,7 @@ public class Person
 {
     public Person(string name)
     {
-        if (string.IsNullOrEmpty(name))
+        if (string.IsNullOrWhiteSpace(name))
             throw new PersonException("Invalid person name");
         Name = name;
     }
