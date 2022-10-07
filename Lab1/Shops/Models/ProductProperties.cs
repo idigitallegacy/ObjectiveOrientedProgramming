@@ -4,13 +4,13 @@ namespace Shops.Models;
 
 public class ProductProperties
 {
-    public ProductProperties(string name, Price price, ProductAmount amount)
+    public ProductProperties(string name, decimal price, int amount)
     {
         if (string.IsNullOrEmpty(name))
             throw new ProductPropertyException("Invalid product name.");
         Name = name;
-        Price = price;
-        Amount = amount;
+        Price = new Price(price);
+        Amount = new ProductAmount(amount);
     }
 
     public string Name { get; }

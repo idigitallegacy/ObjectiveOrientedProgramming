@@ -25,17 +25,19 @@ public class ShopServiceTest
         const string shopAddress = "abc,49";
 
         var shop = shopService.RegisterShop(shopName, shopAddress);
-        var product = shopService.RegisterProduct(productName, productPrice, productAmount);
-        var productList = new List<Product>();
-        productList.Add(product);
+        var request = shopService.RegisterProduct(productName, productPrice, productAmount);
+
+        var supplyBuilder = new SupplyBuilder();
+        supplyBuilder.Build(request);
+
         person.GiveMoney(moneyBefore);
 
-        shopService.AddProducts(shop, productList);
+        shopService.AddProducts(shop, supplyBuilder.Supply);
 
-        shop.BuyProduct(person, product, preferredAmount);
+        shop.BuyProduct(person, shopService.GetProduct(request.Properties), preferredAmount);
 
         Assert.Equal(moneyBefore - (preferredAmount * productPrice), person.Balance);
-        Assert.Equal(productAmount - preferredAmount, shop.GetProduct(product).Amount.Value);
+        Assert.Equal(productAmount - preferredAmount, shop.GetProduct(shopService.GetProduct(request.Properties)).Amount.Value);
     }
 
     [Fact]
@@ -57,13 +59,17 @@ public class ShopServiceTest
 
         var shop1 = shopService.RegisterShop(shop1Name, shopAddress);
         var shop2 = shopService.RegisterShop(shop2Name, shopAddress);
-        var product = shopService.RegisterProduct(productName, productPrice, productAmount);
-        var productList = new List<Product>();
-        productList.Add(product);
+        var request = shopService.RegisterProduct(productName, productPrice, productAmount);
+
+        var supplyBuilder = new SupplyBuilder();
+        supplyBuilder.Build(request);
+
         person.GiveMoney(moneyBefore);
 
-        shopService.AddProducts(shop1, productList);
-        shopService.AddProducts(shop2, productList);
+        shopService.AddProducts(shop1, supplyBuilder.Supply);
+        shopService.AddProducts(shop2, supplyBuilder.Supply);
+
+        var product = shopService.GetProduct(request.Properties);
 
         shopService.ChangePrice(shop1, product, newPrice);
 
@@ -98,6 +104,9 @@ public class ShopServiceTest
         var productListFull = new List<Product>();
         var listToBuy = new List<ItemToBuy>();
 
+        var requestList = new List<SupplyRequest>();
+        var supplyBuilder = new SupplyBuilder();
+
         for (int productName = 0; productName < productNamesAmount; productName++)
             productNames.Add($"Product #{productName}");
 
@@ -111,7 +120,12 @@ public class ShopServiceTest
             shops.Add(shopService.RegisterShop(shopName, shopAddress));
 
         for (int i = 0; i < productNamesAmount; i++)
-            products.Add(shopService.RegisterProduct(productNames[i], prices[i], productAmount));
+        {
+            var request = shopService.RegisterProduct(productNames[i], prices[i], productAmount);
+            var product = shopService.GetProduct(request.Properties);
+            products.Add(product);
+            requestList.Add(request);
+        }
 
         for (var i = 0; i < productNamesAmount; i++)
             productListFull.Add(products[i]);
@@ -120,7 +134,10 @@ public class ShopServiceTest
             listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
 
         for (var i = 0; i < shopsAmount; i++)
-            shopService.AddProducts(shops[i], productListFull);
+        {
+            supplyBuilder.Build(requestList);
+            shopService.AddProducts(shops[i], supplyBuilder.Supply);
+        }
 
         for (var i = 0; i < productsToBuyAmount; i++)
             shopService.ChangePrice(shops[0], products[i], prices[1]);
@@ -168,6 +185,9 @@ public class ShopServiceTest
         var productListFull = new List<Product>();
         var listToBuy = new List<ItemToBuy>();
 
+        var requestList = new List<SupplyRequest>();
+        var supplyBuilder = new SupplyBuilder();
+
         for (int productName = 0; productName < productNamesAmount; productName++)
             productNames.Add($"Product #{productName}");
 
@@ -181,7 +201,12 @@ public class ShopServiceTest
             shops.Add(shopService.RegisterShop(shopName, shopAddress));
 
         for (int i = 0; i < productNamesAmount; i++)
-            products.Add(shopService.RegisterProduct(productNames[i], prices[i], productAmount));
+        {
+            var request = shopService.RegisterProduct(productNames[i], prices[i], productAmount);
+            var product = shopService.GetProduct(request.Properties);
+            products.Add(product);
+            requestList.Add(request);
+        }
 
         for (var i = 0; i < productNamesAmount; i++)
             productListFull.Add(products[i]);
@@ -190,7 +215,10 @@ public class ShopServiceTest
             listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
 
         for (var i = 0; i < shopsAmount; i++)
-            shopService.AddProducts(shops[i], productListFull);
+        {
+            supplyBuilder.Build(requestList);
+            shopService.AddProducts(shops[i], supplyBuilder.Supply);
+        }
 
         person.GiveMoney(moneyBefore);
 
@@ -238,6 +266,9 @@ public class ShopServiceTest
         var person = new Person("Michael");
         var shopService = new ShopService();
 
+        var requestList = new List<SupplyRequest>();
+        var supplyBuilder = new SupplyBuilder();
+
         var productListFull = new List<Product>();
         var incorrectListToBuy = new List<ItemToBuy>();
         var correctListToBuy = new List<ItemToBuy>();
@@ -252,7 +283,12 @@ public class ShopServiceTest
             shops.Add(shopService.RegisterShop(shopName, shopAddress));
 
         for (int i = 0; i < productNamesAmount; i++)
-            products.Add(shopService.RegisterProduct(productNames[i], price, productAmount));
+        {
+            var request = shopService.RegisterProduct(productNames[i], price, productAmount);
+            var product = shopService.GetProduct(request.Properties);
+            products.Add(product);
+            requestList.Add(request);
+        }
 
         for (var i = 0; i < productNamesAmount; i++)
             productListFull.Add(products[i]);
@@ -264,7 +300,10 @@ public class ShopServiceTest
         }
 
         for (var i = 0; i < shopsAmount; i++)
-            shopService.AddProducts(shops[i], productListFull);
+        {
+            supplyBuilder.Build(requestList);
+            shopService.AddProducts(shops[i], supplyBuilder.Supply);
+        }
 
         person.GiveMoney(moneyBefore);
 

@@ -8,6 +8,8 @@ public class ShopService
 {
     private List<Shop> _shops = new ();
 
+    private List<Product> _products = new ();
+
     public Shop RegisterShop(string name, string address)
     {
         Shop shop = new Shop(name, address, Guid.NewGuid());
@@ -15,15 +17,23 @@ public class ShopService
         return shop;
     }
 
-    public ShopProduct RegisterProduct(string name, int price, int amount)
+    public SupplyRequest RegisterProduct(string name, int price, int amount)
     {
-        return new ShopProduct(name, new Price(price), amount);
+        if (_products.Find(product => product.Name == name) is not null)
+            throw new ShopServiceException("Unable to add product: it's already exists.");
+
+        RequestBuilder builder = new ();
+        builder.Build(name, price, amount);
+        Product product = new Product(builder.Request.Properties);
+
+        _products.Add(product);
+        return builder.Request;
     }
 
-    public void AddProducts(Shop shop, List<Product> products)
+    public void AddProducts(Shop shop, Supply supply)
     {
         if (ValidateShop(shop))
-            shop.AddProducts(products);
+            shop.AddProducts(supply);
     }
 
     public void ChangePrice(Shop shop, Product shopProduct, int newPrice)
@@ -54,6 +64,16 @@ public class ShopService
     {
         List<ItemToBuy> singleItemList = new List<ItemToBuy> { new (shopProduct, preferredAmount) };
         return FindCheapestShopToBuy(singleItemList);
+    }
+
+    public Product? FindProduct(ProductProperties properties)
+    {
+        return _products.Find(product => product.Name == properties.Name);
+    }
+
+    public Product GetProduct(ProductProperties properties)
+    {
+        return FindProduct(properties) ?? throw new ShopServiceException($"Unable to get product {properties.Name}");
     }
 
     private bool ValidateShop(Shop shop)

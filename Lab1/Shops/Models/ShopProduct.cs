@@ -4,8 +4,8 @@ namespace Shops.Models;
 
 public class ShopProduct : Product
 {
-    public ShopProduct(string name, Price price, int amount)
-    : base(new ProductProperties(name, price, new ProductAmount(amount)))
+    public ShopProduct(string name, decimal price, int amount)
+    : base(new ProductProperties(name, price, amount))
     {
         Properties = base.Properties;
     }

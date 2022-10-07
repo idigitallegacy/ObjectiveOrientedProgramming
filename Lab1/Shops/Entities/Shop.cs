@@ -19,9 +19,9 @@ public class Shop
 
     public Guid Id { get; }
 
-    public void AddProducts(List<Product> products)
+    public void AddProducts(Supply supply)
     {
-        _products.AddRange(products.Select(product => new ShopProduct(product.Name, product.Price, product.Amount.Value)));
+        _products.AddRange(supply.Products.Select(product => RegisterProduct(product)));
     }
 
     public void ChangePrice(Product shopProduct, decimal newPrice)
@@ -95,6 +95,11 @@ public class Shop
     private void ExecuteSell(ItemToBuy item)
     {
         GetShopProduct(item.Product).Properties.Amount.Value -= item.PreferredAmount;
+    }
+
+    private ShopProduct RegisterProduct(Product product)
+    {
+        return new ShopProduct(product.Name, product.Price.Value, product.Amount.Value);
     }
 
     private ShopProduct? FindShopProduct(Product needleProduct)

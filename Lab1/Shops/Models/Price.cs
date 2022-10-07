@@ -19,7 +19,7 @@ public class Price
         set
         {
             if (value < 0)
-                throw new PriceException("Price mustn't be negative.");
+                throw new PriceException();
             _value = value;
         }
     }
