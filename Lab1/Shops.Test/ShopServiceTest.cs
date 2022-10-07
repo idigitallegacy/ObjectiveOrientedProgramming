@@ -101,7 +101,6 @@ public class ShopServiceTest
         var person = new Person("Michael");
         var shopService = new ShopService();
 
-        var productListFull = new List<Product>();
         var listToBuy = new List<ItemToBuy>();
 
         var requestList = new List<SupplyRequest>();
@@ -126,9 +125,6 @@ public class ShopServiceTest
             products.Add(product);
             requestList.Add(request);
         }
-
-        for (var i = 0; i < productNamesAmount; i++)
-            productListFull.Add(products[i]);
 
         for (var i = 0; i < productsToBuyAmount; i++)
             listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
@@ -182,7 +178,6 @@ public class ShopServiceTest
         var person = new Person("Michael");
         var shopService = new ShopService();
 
-        var productListFull = new List<Product>();
         var listToBuy = new List<ItemToBuy>();
 
         var requestList = new List<SupplyRequest>();
@@ -207,9 +202,6 @@ public class ShopServiceTest
             products.Add(product);
             requestList.Add(request);
         }
-
-        for (var i = 0; i < productNamesAmount; i++)
-            productListFull.Add(products[i]);
 
         for (var i = 0; i < productsToBuyAmount; i++)
             listToBuy.Add(new ItemToBuy(products[i], preferredAmount));
@@ -267,7 +259,6 @@ public class ShopServiceTest
         var requestList = new List<SupplyRequest>();
         var supplyBuilder = new SupplyBuilder();
 
-        var productListFull = new List<Product>();
         var incorrectListToBuy = new List<ItemToBuy>();
         var correctListToBuy = new List<ItemToBuy>();
 
@@ -287,9 +278,6 @@ public class ShopServiceTest
             products.Add(product);
             requestList.Add(request);
         }
-
-        for (var i = 0; i < productNamesAmount; i++)
-            productListFull.Add(products[i]);
 
         for (var i = 0; i < productsToBuyAmount; i++)
         {

@@ -8,7 +8,7 @@ public class ShopService
 {
     private List<Shop> _shops = new ();
 
-    private List<Product> _products = new ();
+    private List<Product> _allProducts = new ();
 
     public Shop RegisterShop(string name, string address)
     {
@@ -19,14 +19,14 @@ public class ShopService
 
     public SupplyRequest RegisterProduct(string name, int price, int amount)
     {
-        if (_products.Find(product => product.Name == name) is not null)
+        if (_allProducts.Find(product => product.Name == name) is not null)
             throw new ShopServiceException("Unable to add product: it's already exists.");
 
         RequestBuilder builder = new ();
         builder.Build(name, price, amount);
         Product product = new Product(builder.Request.Properties);
 
-        _products.Add(product);
+        _allProducts.Add(product);
         return builder.Request;
     }
 
@@ -36,10 +36,10 @@ public class ShopService
             shop.AddProducts(supply);
     }
 
-    public void ChangePrice(Shop shop, Product shopProduct, int newPrice)
+    public void ChangePrice(Shop shop, Product product, int newPrice)
     {
         if (ValidateShop(shop))
-            shop.ChangePrice(shopProduct, newPrice);
+            shop.ChangePrice(product, newPrice);
     }
 
     public Shop? FindCheapestShopToBuy(List<ItemToBuy> buyList)
@@ -60,15 +60,15 @@ public class ShopService
         return orderedShops.First().shop;
     }
 
-    public Shop? FindCheapestShopToBuy(ShopProduct shopProduct, int preferredAmount)
+    public Shop? FindCheapestShopToBuy(Product product, int preferredAmount)
     {
-        List<ItemToBuy> singleItemList = new List<ItemToBuy> { new (shopProduct, preferredAmount) };
+        List<ItemToBuy> singleItemList = new List<ItemToBuy> { new (product, preferredAmount) };
         return FindCheapestShopToBuy(singleItemList);
     }
 
     public Product? FindProduct(ProductProperties properties)
     {
-        return _products.Find(product => product.Name == properties.Name);
+        return _allProducts.Find(product => product.Name == properties.Name);
     }
 
     public Product GetProduct(ProductProperties properties)

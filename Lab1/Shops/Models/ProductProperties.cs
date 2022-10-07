@@ -6,7 +6,7 @@ public class ProductProperties
 {
     public ProductProperties(string name, decimal price, int amount)
     {
-        if (string.IsNullOrEmpty(name))
+        if (string.IsNullOrWhiteSpace(name))
             throw new ProductPropertyException("Invalid product name.");
         Name = name;
         Price = new Price(price);

@@ -9,6 +9,7 @@ public class Shop
 
     public Shop(string name, string address, Guid id)
     {
+        ValidateShopProperties(name, address);
         Id = id;
         Address = address;
         Name = name;
@@ -85,6 +86,15 @@ public class Shop
 
         if (person.Balance < item.PreferredAmount * product.Price.Value)
             throw new ShopException($"Unable to buy product {item.Product.Name}: not enough money.");
+    }
+
+    private void ValidateShopProperties(string name, string address)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ShopException("Unable to register shop with empty name");
+
+        if (string.IsNullOrWhiteSpace(address))
+            throw new ShopException("Unable to register shop with empty address");
     }
 
     private void GetMoney(Person person, decimal amount)
