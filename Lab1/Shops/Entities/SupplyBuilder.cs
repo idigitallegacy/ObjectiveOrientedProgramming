@@ -6,15 +6,40 @@ namespace Shops.Entities;
 
 public class SupplyBuilder
 {
-    public Supply Supply { get; } = new ();
+    private List<SupplyRequest> _requests = new ();
+    private Supply? _supply = null;
 
-    public void Build(SupplyRequest request)
+    public SupplyBuilder()
     {
-        Supply.OrderProduct(request);
+        Reset();
     }
 
-    public void Build(List<SupplyRequest> requests)
+    public SupplyBuilder AddRequest(SupplyRequest request)
     {
-        requests.ForEach(request => Supply.OrderProduct(request));
+        _requests.Add(request);
+        return this;
+    }
+
+    public SupplyBuilder AddRequests(List<SupplyRequest> requests)
+    {
+        _requests.AddRange(requests);
+        return this;
+    }
+
+    public Supply Build()
+    {
+        if (_supply is null)
+            _supply = new Supply();
+        _requests.ForEach(request => _supply.OrderProduct(request));
+
+        Supply result = _supply.DeepCopy();
+        Reset();
+        return result;
+    }
+
+    public void Reset()
+    {
+        _requests = new ();
+        _supply = null;
     }
 }

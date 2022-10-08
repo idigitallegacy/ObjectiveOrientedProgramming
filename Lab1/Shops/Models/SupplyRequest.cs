@@ -8,4 +8,14 @@ public class SupplyRequest
     }
 
     public ProductProperties Properties { get; }
+
+    public object ShallowCopy()
+    {
+        return MemberwiseClone();
+    }
+
+    public SupplyRequest DeepCopy()
+    {
+        return new SupplyRequest(Properties.Name, Properties.Price.Value, Properties.Amount.Value);
+    }
 }

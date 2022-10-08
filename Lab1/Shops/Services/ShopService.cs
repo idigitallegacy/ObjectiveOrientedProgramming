@@ -23,11 +23,10 @@ public class ShopService
             throw new ShopServiceException("Unable to add product: it's already exists.");
 
         RequestBuilder builder = new ();
-        builder.Build(name, price, amount);
-        Product product = new Product(builder.Request.Properties);
+        SupplyRequest request = builder.SetName(name).SetPrice(price).SetAmount(amount).Build();
 
-        _allProducts.Add(product);
-        return builder.Request;
+        _allProducts.Add(new Product(request.Properties));
+        return request;
     }
 
     public void AddProducts(Shop shop, Supply supply)
