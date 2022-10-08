@@ -4,20 +4,20 @@ namespace Shops.Models;
 
 public class Supply
 {
-    private List<Product> _products = new ();
+    private List<SupplyRequest> _requests = new ();
 
     public Supply() { }
 
-    private Supply(List<Product> products)
+    private Supply(List<SupplyRequest> products)
     {
-        _products = new List<Product>(products);
+        _requests = new List<SupplyRequest>(products);
     }
 
-    public IReadOnlyCollection<Product> Products => _products;
+    public IReadOnlyCollection<SupplyRequest> Requests => _requests;
 
     public void OrderProduct(SupplyRequest request)
     {
-        _products.Add(new Product(request.Properties));
+        _requests.Add(new SupplyRequest(request.Properties.Name, request.Properties.Price.Value, request.Properties.Amount.Value));
     }
 
     public object ShallowCopy()
@@ -27,6 +27,6 @@ public class Supply
 
     public Supply DeepCopy()
     {
-        return new Supply(_products);
+        return new Supply(_requests);
     }
 }

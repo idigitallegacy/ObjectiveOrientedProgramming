@@ -22,7 +22,7 @@ public class Shop
 
     public void AddProducts(Supply supply)
     {
-        _products.AddRange(supply.Products.Select(product => RegisterProduct(product)));
+        _products.AddRange(supply.Requests.Select(request => RegisterProduct(request)));
     }
 
     public void ChangePrice(Product shopProduct, decimal newPrice)
@@ -107,9 +107,9 @@ public class Shop
         GetShopProduct(item.Product).Properties.Amount.Value -= item.PreferredAmount;
     }
 
-    private ShopProduct RegisterProduct(Product product)
+    private ShopProduct RegisterProduct(SupplyRequest request)
     {
-        return new ShopProduct(product.Name, product.Price.Value, product.Amount.Value);
+        return new ShopProduct(request.Properties.Name, request.Properties.Price.Value, request.Properties.Amount.Value);
     }
 
     private ShopProduct? FindShopProduct(Product needleProduct)
