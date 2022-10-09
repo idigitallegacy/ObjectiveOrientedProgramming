@@ -22,8 +22,7 @@ public class ShopService
         if (_allProducts.Find(product => product.Name == name) is not null)
             throw new ShopServiceException("Unable to add product: it's already exists.");
 
-        RequestBuilder builder = new ();
-        SupplyRequest request = builder.SetName(name).SetPrice(price).SetAmount(amount).Build();
+        SupplyRequest request = new SupplyRequest(name, price, amount);
 
         _allProducts.Add(new Product(request.Properties));
         return request;
