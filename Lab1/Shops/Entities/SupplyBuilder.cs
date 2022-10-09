@@ -7,7 +7,6 @@ namespace Shops.Entities;
 public class SupplyBuilder
 {
     private List<SupplyRequest> _requests = new ();
-    private Supply? _supply = null;
 
     public SupplyBuilder()
     {
@@ -20,19 +19,9 @@ public class SupplyBuilder
         return this;
     }
 
-    public SupplyBuilder AddRequests(List<SupplyRequest> requests)
-    {
-        _requests.AddRange(requests);
-        return this;
-    }
-
     public Supply Build()
     {
-        if (_supply is null)
-            _supply = new Supply();
-        _requests.ForEach(request => _supply.OrderProduct(request));
-
-        Supply result = _supply.DeepCopy();
+        Supply result = new Supply(_requests);
         Reset();
         return result;
     }
@@ -40,6 +29,5 @@ public class SupplyBuilder
     public void Reset()
     {
         _requests = new ();
-        _supply = null;
     }
 }
