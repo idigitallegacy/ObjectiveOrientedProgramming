@@ -5,7 +5,7 @@ namespace Isu.Models;
 public class GroupName
 {
     private const int RequiredNameLength = 5;
-    private static readonly char[] PossibleFacultyLettersArray = { 'M' };
+    private static readonly char[] PossibleFacultyLettersArray = { 'M', 'F', 'X', 'C' };
 
     public GroupName(string name)
     {
