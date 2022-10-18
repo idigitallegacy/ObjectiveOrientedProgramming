@@ -9,8 +9,8 @@ namespace Isu.Extra.Models;
 public class Lesson : IReadOnlyLesson
 {
     private DayOfWeek _dayOfWeek;
-    private Time _startTime;
-    private Time _endTime;
+    private TimeSpan _startTime;
+    private TimeSpan _endTime;
     private Teacher _teacher;
     private Audience _audience;
     private StudyStream? _associatedStream;
@@ -18,8 +18,8 @@ public class Lesson : IReadOnlyLesson
 
     public Lesson(
         DayOfWeek dayOfWeek,
-        Time startTime,
-        Time endTime,
+        TimeSpan startTime,
+        TimeSpan endTime,
         Teacher teacher,
         Audience audience,
         StudyStream? associatedStream = null,
@@ -37,8 +37,8 @@ public class Lesson : IReadOnlyLesson
     }
 
     public DayOfWeek DayOfWeek => _dayOfWeek;
-    public Time StartTime => _startTime;
-    public Time EndTime => _endTime;
+    public TimeSpan StartTime => _startTime;
+    public TimeSpan EndTime => _endTime;
     public Teacher Teacher => _teacher;
     public StudyStream? AssociatedStream => _associatedStream;
     public ExtendedGroup? AssociatedGroup => _associatedGroup;

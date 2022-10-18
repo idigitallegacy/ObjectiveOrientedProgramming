@@ -4,7 +4,7 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Entities;
 
-public class Teacher : Scheduler, IReadOnlyTeacher
+public class Teacher : IScheduler, IReadOnlyTeacher
 {
     private Schedule _schedule = new ();
 
@@ -20,17 +20,17 @@ public class Teacher : Scheduler, IReadOnlyTeacher
     public FacultyId FacultyId { get; }
     public IReadOnlySchedule Schedule => _schedule;
 
-    public override void AddLesson(Lesson lesson)
+    public void AddLesson(Lesson lesson)
     {
         _schedule.AddLesson(lesson);
     }
 
-    public override void RemoveLesson(Lesson lesson)
+    public void RemoveLesson(Lesson lesson)
     {
         _schedule.RemoveLesson(lesson);
     }
 
-    public override Lesson? FindLesson(DayOfWeek dayOfWeek, Time startTime, Time endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
     }

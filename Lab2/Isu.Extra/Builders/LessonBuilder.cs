@@ -9,8 +9,8 @@ namespace Isu.Extra.Builders;
 public class LessonBuilder
 {
     private DayOfWeek _weekDay;
-    private Time? _startTime;
-    private Time? _endTime;
+    private TimeSpan _startTime;
+    private TimeSpan _endTime;
     private Teacher? _teacher;
     private Audience? _audience;
     private StudyStream? _associatedStream;
@@ -22,13 +22,13 @@ public class LessonBuilder
         return this;
     }
 
-    public LessonBuilder StartTime(Time time)
+    public LessonBuilder StartTime(TimeSpan time)
     {
         _startTime = time;
         return this;
     }
 
-    public LessonBuilder EndTime(Time time)
+    public LessonBuilder EndTime(TimeSpan time)
     {
         _endTime = time;
         return this;
@@ -60,7 +60,7 @@ public class LessonBuilder
 
     public Lesson Build()
     {
-        if (_startTime is null || _endTime is null || _teacher is null || _audience is null)
+        if (_teacher is null || _audience is null)
             throw new Exception(); // TODO
         Lesson lesson = new Lesson(_weekDay, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
         Reset();
@@ -69,8 +69,6 @@ public class LessonBuilder
 
     private void Reset()
     {
-        _startTime = null;
-        _endTime = null;
         _teacher = null;
         _associatedGroup = null;
     }

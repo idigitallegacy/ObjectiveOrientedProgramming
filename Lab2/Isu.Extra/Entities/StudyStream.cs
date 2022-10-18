@@ -7,7 +7,7 @@ using Isu.Models;
 
 namespace Isu.Extra.Entities;
 
-public class StudyStream : Scheduler, IReadOnlyStudyStream
+public class StudyStream : IScheduler, IReadOnlyStudyStream
 {
     private Schedule _schedule;
     private ExtendedGroup _group;
@@ -33,18 +33,18 @@ public class StudyStream : Scheduler, IReadOnlyStudyStream
         _group.RemoveStudent(student);
     }
 
-    public override void AddLesson(Lesson lesson)
+    public void AddLesson(Lesson lesson)
     {
         _group.AddLesson(lesson);
         _schedule.AddLesson(lesson);
     }
 
-    public override void RemoveLesson(Lesson lesson)
+    public void RemoveLesson(Lesson lesson)
     {
         _schedule.RemoveLesson(lesson);
     }
 
-    public override Lesson? FindLesson(DayOfWeek dayOfWeek, Time startTime, Time endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
     }

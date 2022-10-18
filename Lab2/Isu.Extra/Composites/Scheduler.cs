@@ -2,11 +2,11 @@ using Isu.Extra.Models;
 
 namespace Isu.Extra.Composites;
 
-public abstract class Scheduler
+public interface IScheduler
 {
-    public abstract void AddLesson(Lesson lesson);
+    public void AddLesson(Lesson lesson);
 
-    public abstract void RemoveLesson(Lesson lesson);
+    public void RemoveLesson(Lesson lesson);
 
-    public abstract Lesson? FindLesson(DayOfWeek dayOfWeek, Time startTime, Time endTime);
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
 }

@@ -4,7 +4,7 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Models;
 
-public class Audience : Scheduler, IReadOnlyAudience
+public class Audience : IScheduler, IReadOnlyAudience
 {
     private Schedule _schedule;
     private int _number;
@@ -20,17 +20,17 @@ public class Audience : Scheduler, IReadOnlyAudience
     public IReadOnlySchedule Schedule => _schedule;
     public int Number => _number;
 
-    public override void AddLesson(Lesson lesson)
+    public void AddLesson(Lesson lesson)
     {
         _schedule.AddLesson(lesson);
     }
 
-    public override void RemoveLesson(Lesson lesson)
+    public void RemoveLesson(Lesson lesson)
     {
         _schedule.RemoveLesson(lesson);
     }
 
-    public override Lesson? FindLesson(DayOfWeek dayOfWeek, Time startTime, Time endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
     }

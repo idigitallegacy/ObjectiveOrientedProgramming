@@ -1,5 +1,6 @@
 using Isu.Entities;
 using Isu.Extra.Builders;
+using Isu.Extra.Composites;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
 using Isu.Models;

@@ -1,10 +1,11 @@
 using Isu.Extra.Composites;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Entities;
 
-public class Schedule : Scheduler, IReadOnlySchedule
+public class Schedule : IScheduler, IReadOnlySchedule
 {
     private List<Lesson> _lessons = new ();
 
@@ -12,21 +13,21 @@ public class Schedule : Scheduler, IReadOnlySchedule
 
     public IReadOnlyCollection<Lesson> Lessons => _lessons;
 
-    public override void AddLesson(Lesson lesson)
+    public void AddLesson(Lesson lesson)
+    {
+        if (TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
+            throw SchedulerException.TimeIsAlreayScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
+        _lessons.Add(lesson);
+    }
+
+    public void RemoveLesson(Lesson lesson)
     {
         if (TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
             throw new Exception(); // TODO
         _lessons.Add(lesson);
     }
 
-    public override void RemoveLesson(Lesson lesson)
-    {
-        if (TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
-        _lessons.Add(lesson);
-    }
-
-    public override Lesson? FindLesson(DayOfWeek dayOfWeek, Time startTime, Time endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _lessons.FirstOrDefault(lesson =>
         {
@@ -36,7 +37,7 @@ public class Schedule : Scheduler, IReadOnlySchedule
         });
     }
 
-    public bool TimeIsScheduled(DayOfWeek dayOfWeek, Time startTime, Time endTime)
+    public bool TimeIsScheduled(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return Lessons
             .Select(lesson => new
