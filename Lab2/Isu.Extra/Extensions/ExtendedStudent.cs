@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Isu.Entities;
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
 using Isu.Services;
@@ -28,7 +29,7 @@ public class ExtendedStudent : Student, IReadOnlyExtendedStudent
     public void AddOgnpCourse(IReadOnlyOgnpCourse course)
     {
         if (_ognpCourses.Count == 2)
-            throw new Exception(); // TODO
+            throw ExtendedStudentException.StudentHasAllOgnp();
         else
             _ognpCourses.Add(course);
     }
@@ -37,7 +38,7 @@ public class ExtendedStudent : Student, IReadOnlyExtendedStudent
     {
         int needleCourseIndex = _ognpCourses.IndexOf(oldOgnpCourse);
         if (needleCourseIndex == -1)
-            throw new Exception(); // TODO
+            throw ExtendedStudentException.UnableToFindOgnp();
         _ognpCourses[needleCourseIndex] = newOgnpCourse;
     }
 }
