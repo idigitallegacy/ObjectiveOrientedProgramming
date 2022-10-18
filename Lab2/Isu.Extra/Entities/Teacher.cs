@@ -5,7 +5,7 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Entities;
 
-public class Teacher : IScheduler, IReadOnlyTeacher
+public class Teacher : IScheduler, IReadOnlyTeacher, IEquatable<Teacher>
 {
     private Schedule _schedule = new ();
 
@@ -40,5 +40,25 @@ public class Teacher : IScheduler, IReadOnlyTeacher
     public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
+    }
+
+    public bool Equals(Teacher? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _schedule.Equals(other._schedule) && Name == other.Name && FacultyId.Equals(other.FacultyId);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Teacher)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_schedule, Name, FacultyId);
     }
 }

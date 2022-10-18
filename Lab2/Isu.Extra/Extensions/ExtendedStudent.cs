@@ -8,7 +8,7 @@ using Isu.Services;
 
 namespace Isu.Extra.Extensions;
 
-public class ExtendedStudent : Student, IReadOnlyExtendedStudent
+public class ExtendedStudent : Student, IReadOnlyExtendedStudent, IEquatable<Student>
 {
     private List<IReadOnlyOgnpCourse?> _ognpCourses = new ();
     private FacultyId _facultyId;
@@ -47,5 +47,28 @@ public class ExtendedStudent : Student, IReadOnlyExtendedStudent
         if (needleCourseIndex == -1)
             throw ExtendedStudentException.UnableToFindOgnp();
         _ognpCourses[needleCourseIndex] = newOgnpCourse;
+    }
+
+    public bool Equals(Student? other)
+    {
+        return base.Equals(other);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((ExtendedStudent)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(base.GetHashCode(), _ognpCourses, _facultyId, _group);
+    }
+
+    protected bool Equals(ExtendedStudent other)
+    {
+        return base.Equals(other) && _ognpCourses.Equals(other._ognpCourses) && _facultyId.Equals(other._facultyId) && _group.Equals(other._group);
     }
 }

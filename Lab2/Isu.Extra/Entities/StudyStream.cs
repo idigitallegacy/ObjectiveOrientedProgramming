@@ -8,7 +8,7 @@ using Isu.Models;
 
 namespace Isu.Extra.Entities;
 
-public class StudyStream : IScheduler, IReadOnlyStudyStream
+public class StudyStream : IScheduler, IReadOnlyStudyStream, IEquatable<StudyStream>
 {
     private Schedule _schedule;
     private ExtendedGroup _group;
@@ -54,6 +54,26 @@ public class StudyStream : IScheduler, IReadOnlyStudyStream
     public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
+    }
+
+    public bool Equals(StudyStream? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _schedule.Equals(other._schedule) && _group.Equals(other._group);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((StudyStream)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_schedule, _group);
     }
 
     private void ValidateStudent(IReadOnlyExtendedStudent student)

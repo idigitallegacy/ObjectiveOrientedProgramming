@@ -7,7 +7,7 @@ using Isu.Services;
 
 namespace Isu.Extra.Extensions;
 
-public class ExtendedGroup : Group, IReadOnlyExtendedGroup
+public class ExtendedGroup : Group, IReadOnlyExtendedGroup, IEquatable<Group>
 {
     private Schedule _schedule = new ();
     private List<IReadOnlyExtendedStudent> _students = new ();
@@ -51,5 +51,28 @@ public class ExtendedGroup : Group, IReadOnlyExtendedGroup
     {
         Lesson rwLesson = (Lesson)lesson;
         _schedule.AddLesson(rwLesson);
+    }
+
+    public bool Equals(Group? other)
+    {
+        return base.Equals(other);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((ExtendedGroup)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(base.GetHashCode(), _schedule, _students, _facultyId, Capacity);
+    }
+
+    protected bool Equals(ExtendedGroup other)
+    {
+        return base.Equals(other) && _schedule.Equals(other._schedule) && _students.Equals(other._students) && _facultyId.Equals(other._facultyId) && Capacity == other.Capacity;
     }
 }

@@ -5,7 +5,7 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Entities;
 
-public class Schedule : IScheduler, IReadOnlySchedule
+public class Schedule : IScheduler, IReadOnlySchedule, IEquatable<Schedule>
 {
     private List<Lesson> _lessons = new ();
 
@@ -56,5 +56,25 @@ public class Schedule : IScheduler, IReadOnlySchedule
                 return (scheduledPeriod.startTime > startTime && scheduledPeriod.startTime < endTime) ||
                        (scheduledPeriod.endTime > startTime && scheduledPeriod.endTime < endTime);
             });
+    }
+
+    public bool Equals(Schedule? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _lessons.Equals(other._lessons);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Schedule)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return _lessons.GetHashCode();
     }
 }

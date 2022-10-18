@@ -9,7 +9,7 @@ using Isu.Models;
 
 namespace Isu.Extra.Entities;
 
-public class OgnpCourse : IReadOnlyOgnpCourse
+public class OgnpCourse : IReadOnlyOgnpCourse, IEquatable<OgnpCourse>
 {
     private List<StudyStream> _streams;
     private List<Teacher> _teachers;
@@ -63,6 +63,26 @@ public class OgnpCourse : IReadOnlyOgnpCourse
     public void RemoveLesson(StudyStream stream, Lesson lesson)
     {
         stream.RemoveLesson(lesson);
+    }
+
+    public bool Equals(OgnpCourse? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _streams.Equals(other._streams) && _teachers.Equals(other._teachers) && _facultyId.Equals(other._facultyId);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((OgnpCourse)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_streams, _teachers, _facultyId);
     }
 
     private StudyStream GetStream(GroupName streamName)
