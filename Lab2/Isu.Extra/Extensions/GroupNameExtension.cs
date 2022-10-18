@@ -9,32 +9,6 @@ public static class GroupNameExtension
     public static FacultyId GetFacultyId(this GroupName groupName)
     {
         char facultyLetter = groupName.FacultyId[_facultyIdPosition];
-        switch (facultyLetter)
-        {
-            case 'M':
-            {
-                return FacultyId.TINT;
-            }
-
-            case 'F':
-            {
-                return FacultyId.FTF;
-            }
-
-            case 'X':
-            {
-                return FacultyId.FTMI;
-            }
-
-            case 'C':
-            {
-                return FacultyId.CTU;
-            }
-
-            default:
-            {
-                throw new Exception(); // TODO
-            }
-        }
+        return new FacultyId(facultyLetter);
     }
 }

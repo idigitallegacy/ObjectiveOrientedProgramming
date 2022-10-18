@@ -17,6 +17,12 @@ public class Teacher : IScheduler, IReadOnlyTeacher
         FacultyId = facultyId;
     }
 
+    public Teacher(IReadOnlyTeacher copiedTeacher)
+    {
+        Name = copiedTeacher.Name;
+        FacultyId = new FacultyId(copiedTeacher.FacultyId);
+    }
+
     public string Name { get; }
     public FacultyId FacultyId { get; }
     public IReadOnlySchedule Schedule => _schedule;

@@ -21,6 +21,13 @@ public class ExtendedStudent : Student, IReadOnlyExtendedStudent
         _group = group;
     }
 
+    public ExtendedStudent(IReadOnlyExtendedStudent copiedStudent)
+        : base(copiedStudent.Name, copiedStudent.Group, copiedStudent.Id)
+    {
+        _facultyId = new FacultyId(copiedStudent.FacultyId);
+        _group = new ExtendedGroup(copiedStudent.ExtendedGroup);
+    }
+
     public FacultyId FacultyId => _facultyId;
     public IReadOnlyExtendedGroup ExtendedGroup => _group;
 

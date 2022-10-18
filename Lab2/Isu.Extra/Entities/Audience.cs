@@ -18,6 +18,12 @@ public class Audience : IScheduler, IReadOnlyAudience
         _schedule = new Schedule();
     }
 
+    public Audience(IReadOnlyAudience copiedAudience)
+    {
+        _schedule = new Schedule(copiedAudience.Schedule);
+        _number = copiedAudience.Number;
+    }
+
     public IReadOnlySchedule Schedule => _schedule;
     public int Number => _number;
 

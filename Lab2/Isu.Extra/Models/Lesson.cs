@@ -7,7 +7,7 @@ using Stream = System.IO.Stream;
 
 namespace Isu.Extra.Models;
 
-public class Lesson : IReadOnlyLesson
+public class Lesson : IReadOnlyLesson, IEquatable<Lesson>
 {
     private DayOfWeek _dayOfWeek;
     private TimeSpan _startTime;
@@ -37,7 +37,21 @@ public class Lesson : IReadOnlyLesson
         _associatedGroup = associatedGroup;
     }
 
+    public Lesson(IReadOnlyLesson copiedLesson)
+    {
+        _dayOfWeek = copiedLesson.DayOfWeek;
+        _startTime = copiedLesson.StartTime;
+        _endTime = copiedLesson.EndTime;
+        _teacher = new Teacher(copiedLesson.Teacher);
+        _audience = new Audience(copiedLesson.Audience);
+        if (copiedLesson.AssociatedStream is not null)
+            _associatedStream = new StudyStream(copiedLesson.AssociatedStream);
+        if (copiedLesson.AssociatedGroup is not null)
+            _associatedGroup = new ExtendedGroup(copiedLesson.AssociatedGroup);
+    }
+
     public DayOfWeek DayOfWeek => _dayOfWeek;
+    public Audience Audience => _audience;
     public TimeSpan StartTime => _startTime;
     public TimeSpan EndTime => _endTime;
     public Teacher Teacher => _teacher;
@@ -54,6 +68,13 @@ public class Lesson : IReadOnlyLesson
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_startTime, _endTime, _teacher, _associatedStream, _associatedGroup, (int)_dayOfWeek);
+        return HashCode.Combine((int)_dayOfWeek, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
+    }
+
+    public bool Equals(Lesson? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _dayOfWeek == other._dayOfWeek && _startTime.Equals(other._startTime) && _endTime.Equals(other._endTime) && _teacher.Equals(other._teacher) && _audience.Equals(other._audience) && Equals(_associatedStream, other._associatedStream) && Equals(_associatedGroup, other._associatedGroup);
     }
 }

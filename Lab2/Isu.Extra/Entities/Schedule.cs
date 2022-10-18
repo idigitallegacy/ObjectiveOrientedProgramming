@@ -9,6 +9,12 @@ public class Schedule : IScheduler, IReadOnlySchedule
 {
     private List<Lesson> _lessons = new ();
 
+    public Schedule() { }
+    public Schedule(IReadOnlySchedule copiedSchedule)
+    {
+        _lessons = new List<Lesson>(copiedSchedule.Lessons);
+    }
+
     IReadOnlyCollection<Lesson> IReadOnlySchedule.Lessons => _lessons;
 
     public IReadOnlyCollection<Lesson> Lessons => _lessons;

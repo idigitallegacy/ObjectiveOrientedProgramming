@@ -2,6 +2,7 @@ using Isu.Entities;
 using Isu.Extra.Builders;
 using Isu.Extra.Composites;
 using Isu.Extra.Exceptions;
+using Isu.Extra.Extensions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
 using Isu.Models;
@@ -23,6 +24,13 @@ public class OgnpCourse : IReadOnlyOgnpCourse
         _streams = new List<StudyStream>(streams);
         _teachers = new List<Teacher>(teachers);
         _facultyId = facultyId;
+    }
+
+    public OgnpCourse(IReadOnlyOgnpCourse copiedCourse)
+    {
+        _streams = new List<StudyStream>(copiedCourse.Streams.Select(roStream => roStream.ToStream()));
+        _teachers = new List<Teacher>(copiedCourse.Teachers.Select(roTeacher => roTeacher.ToTeacher()));
+        _facultyId = new FacultyId(copiedCourse.FacultyId);
     }
 
     public IReadOnlyCollection<IReadOnlyStudyStream> Streams => _streams;

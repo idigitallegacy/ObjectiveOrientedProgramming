@@ -17,11 +17,23 @@ public class ExtendedGroup : Group, IReadOnlyExtendedGroup
         : base(groupName, capacity)
     {
         _facultyId = groupName.GetFacultyId();
+        Capacity = capacity;
+    }
+
+    public ExtendedGroup(IReadOnlyExtendedGroup copiedGroup)
+        : base(copiedGroup.GroupName, copiedGroup.Capacity)
+    {
+        _schedule = new Schedule(copiedGroup.Schedule);
+        _students = new List<IReadOnlyExtendedStudent>(copiedGroup.Students);
+        _facultyId = new FacultyId(copiedGroup.FacultyId);
+        Capacity = copiedGroup.Capacity;
     }
 
     public IReadOnlySchedule Schedule => _schedule;
     public new IReadOnlyCollection<IReadOnlyExtendedStudent> Students => _students;
     public FacultyId FacultyId => _facultyId;
+
+    public int Capacity { get; }
 
     public void AddStudent(IReadOnlyExtendedStudent student)
     {

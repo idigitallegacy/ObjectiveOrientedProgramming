@@ -19,6 +19,12 @@ public class StudyStream : IScheduler, IReadOnlyStudyStream
         _group = new ExtendedGroup(streamName, streamCapacity);
     }
 
+    public StudyStream(IReadOnlyStudyStream copiedStream)
+    {
+        _schedule = new Schedule(copiedStream.Schedule);
+        _group = new ExtendedGroup(copiedStream.Group);
+    }
+
     public IReadOnlySchedule Schedule => _schedule;
     public ExtendedGroup Group => _group;
 
