@@ -3,9 +3,7 @@ namespace Isu.Extra.Exceptions;
 public class SchedulerException : Exception
 {
     public SchedulerException(string message = "")
-        : base(message)
-    {
-    }
+        : base(message) { }
 
     public static SchedulerException TimeIsAlreadyScheduled(
         DayOfWeek? dayOfWeek = null,

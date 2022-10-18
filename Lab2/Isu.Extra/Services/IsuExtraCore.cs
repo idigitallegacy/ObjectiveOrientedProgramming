@@ -1,6 +1,7 @@
 using Isu.Entities;
 using Isu.Extra.Builders;
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Extensions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
@@ -51,7 +52,7 @@ public class IsuExtraCore
     public void ConstructCourse(FacultyId facultyId, IReadOnlyTeacher? teacher = null, IReadOnlyStudyStream? stream = null)
     {
         if (teacher?.FacultyId != facultyId)
-            throw new Exception(); // TODO
+            throw IsuExtraCoreException.WrongFacultyId();
         Teacher? rwTeacher = teacher is null ? null : (Teacher)teacher;
         StudyStream? rwStream = stream is null ? null : (StudyStream)stream;
 
@@ -116,7 +117,7 @@ public class IsuExtraCore
         Lesson rwLesson = (Lesson)lesson;
 
         if (lesson.AssociatedStream is null)
-            throw new Exception(); // TODO
+            throw IsuExtraCoreException.StreamIsNotSet();
         rwCourse.AddLesson(lesson.AssociatedStream, rwLesson);
         lesson.Teacher.AddLesson(rwLesson);
     }
@@ -166,21 +167,20 @@ public class IsuExtraCore
 
     private void ValidateLesson(IReadOnlyAudience audience, IReadOnlyLesson lesson)
     {
-        if (audience.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
-        if (lesson.Teacher.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
-        if (lesson.AssociatedGroup is not null &&
-            lesson.AssociatedGroup.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
-        if (lesson.AssociatedStream is not null &&
-            lesson.AssociatedStream.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
+        if (audience.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime) ||
+            lesson.Teacher.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime) ||
+
+            (lesson.AssociatedGroup is not null &&
+             lesson.AssociatedGroup.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime)) ||
+
+            (lesson.AssociatedStream is not null &&
+             lesson.AssociatedStream.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime)))
+            throw SchedulerException.TimeIsAlreadyScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
     }
 
     private void ValidateStudent(IReadOnlyExtendedStudent student)
     {
         if (student.OgnpCourses.All(course => course is not null))
-            throw new Exception();
+            throw IsuExtraCoreException.StudentHasAllOgnp();
     }
 }
