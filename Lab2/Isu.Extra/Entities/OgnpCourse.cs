@@ -1,6 +1,7 @@
 using Isu.Entities;
 using Isu.Extra.Builders;
 using Isu.Extra.Composites;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
 using Isu.Models;
@@ -16,9 +17,9 @@ public class OgnpCourse : IReadOnlyOgnpCourse
     public OgnpCourse(FacultyId facultyId, List<Teacher> teachers, List<StudyStream> streams)
     {
         if (teachers.Count == 0)
-            throw new Exception(); // TODO
+            throw OgnpCourseException.TooFewTeachers();
         if (streams.Count == 0)
-            throw new Exception(); // TODO
+            throw OgnpCourseException.TooFewStreams();
         _streams = new List<StudyStream>(streams);
         _teachers = new List<Teacher>(teachers);
         _facultyId = facultyId;
@@ -59,14 +60,14 @@ public class OgnpCourse : IReadOnlyOgnpCourse
     private StudyStream GetStream(GroupName streamName)
     {
         return _streams.FirstOrDefault(stream => stream.Group.GroupName.Name == streamName.Name) ??
-               throw new Exception(); // TODO
+               throw OgnpCourseException.StreamNotFound(streamName);
     }
 
     private void ValidateStreamLesson(StudyStream stream, Lesson lesson)
     {
         if (!_teachers.Contains(lesson.Teacher))
-            throw new Exception(); // TODO
+            throw OgnpCourseException.TeacherNotFound(lesson.Teacher);
         if (stream.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
+            throw SchedulerException.TimeIsAlreadyScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
     }
 }

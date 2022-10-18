@@ -1,4 +1,5 @@
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Models;
 using Isu.Models;
 
@@ -14,7 +15,7 @@ public class OgnpCourseBuilder
     public OgnpCourseBuilder SetFacultyId(FacultyId facultyId)
     {
         if (_facultyIdIsSet && (_facultyId != facultyId))
-            throw new Exception(); // TODO
+            throw OgnpCourseException.WrongFacultyId();
         _facultyId = facultyId;
         _facultyIdIsSet = true;
         return this;
@@ -31,7 +32,7 @@ public class OgnpCourseBuilder
     {
         ValidateFacultyIdIsSet();
         if (teacher.FacultyId != _facultyId)
-            throw new Exception(); // TODO
+            throw OgnpCourseException.WrongFacultyId();
         _teachers.Add(teacher);
         return this;
     }
@@ -54,6 +55,6 @@ public class OgnpCourseBuilder
     private void ValidateFacultyIdIsSet()
     {
         if (!_facultyIdIsSet)
-            throw new Exception(); // TODO
+            throw OgnpCourseException.WrongFacultyId();
     }
 }
