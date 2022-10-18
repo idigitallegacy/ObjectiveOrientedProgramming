@@ -16,14 +16,14 @@ public class Schedule : IScheduler, IReadOnlySchedule
     public void AddLesson(Lesson lesson)
     {
         if (TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw SchedulerException.TimeIsAlreayScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
+            throw SchedulerException.TimeIsAlreadyScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
         _lessons.Add(lesson);
     }
 
     public void RemoveLesson(Lesson lesson)
     {
-        if (TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw new Exception(); // TODO
+        if (!TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
+            throw SchedulerException.TimeIsNotScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
         _lessons.Add(lesson);
     }
 

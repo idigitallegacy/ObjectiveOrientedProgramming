@@ -1,5 +1,6 @@
 using Isu.Extra.Composites;
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Models;
@@ -12,7 +13,7 @@ public class Audience : IScheduler, IReadOnlyAudience
     public Audience(int number)
     {
         if (number < 0)
-            throw new Exception(); // TODO
+            throw SchedulerException.WrongAudienceNumber(number);
         _number = number;
         _schedule = new Schedule();
     }

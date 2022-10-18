@@ -1,5 +1,6 @@
 using Isu.Entities;
 using Isu.Extra.Composites;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Extensions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
@@ -70,6 +71,6 @@ public class StudyStream : IScheduler, IReadOnlyStudyStream
                 return returnValue is not null && returnValue == true;
             });
         if (studentGroupTimeIsScheduled || studentIsScheduledByOgnp)
-            throw new Exception(); // TODO
+            throw SchedulerException.TimeIsAlreadyScheduled();
     }
 }
