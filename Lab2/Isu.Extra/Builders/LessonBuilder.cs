@@ -1,5 +1,6 @@
 using Isu.Entities;
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Extensions;
 using Isu.Extra.Models;
 using Isu.Models;
@@ -61,7 +62,7 @@ public class LessonBuilder
     public Lesson Build()
     {
         if (_teacher is null || _audience is null)
-            throw new Exception(); // TODO
+            throw LessonException.NoTeacherOrAudience();
         Lesson lesson = new Lesson(_weekDay, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
         Reset();
         return lesson;

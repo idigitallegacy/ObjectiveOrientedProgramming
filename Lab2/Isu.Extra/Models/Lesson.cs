@@ -1,4 +1,5 @@
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Extensions;
 using Isu.Extra.Wrappers;
 using Isu.Models;
@@ -26,7 +27,7 @@ public class Lesson : IReadOnlyLesson
         ExtendedGroup? associatedGroup = null)
     {
         if (associatedStream is null && associatedGroup is null)
-            throw new Exception(); // TODO
+            throw LessonException.NoAssignee();
         _dayOfWeek = dayOfWeek;
         _startTime = startTime;
         _endTime = endTime;
