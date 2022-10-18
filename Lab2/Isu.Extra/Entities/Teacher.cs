@@ -1,4 +1,5 @@
 using Isu.Extra.Composites;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Models;
 using Isu.Extra.Wrappers;
 
@@ -11,7 +12,7 @@ public class Teacher : IScheduler, IReadOnlyTeacher
     public Teacher(string name, FacultyId facultyId)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new Exception(); // TODO
+            throw new TeacherException("Wrong teacher name");
         Name = name;
         FacultyId = facultyId;
     }
