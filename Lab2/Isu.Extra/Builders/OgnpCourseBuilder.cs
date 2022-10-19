@@ -7,31 +7,29 @@ namespace Isu.Extra.Builders;
 
 public class OgnpCourseBuilder
 {
-    private bool _facultyIdIsSet = false;
     private List<StudyStream> _streams = new ();
     private List<Teacher> _teachers = new ();
-    private FacultyId _facultyId;
+    private FacultyId? _facultyId;
 
     public OgnpCourseBuilder SetFacultyId(FacultyId facultyId)
     {
-        if (_facultyIdIsSet && (_facultyId != facultyId))
+        if (_facultyId is not null && !_facultyId.Equals(facultyId))
             throw OgnpCourseException.WrongFacultyId();
         _facultyId = facultyId;
-        _facultyIdIsSet = true;
         return this;
     }
 
     public OgnpCourseBuilder AddStream(StudyStream stream)
     {
-        ValidateFacultyIdIsSet();
+        if (_facultyId is null)
+            throw OgnpCourseException.WrongFacultyId();
         _streams.Add(stream);
         return this;
     }
 
     public OgnpCourseBuilder AddTeacher(Teacher teacher)
     {
-        ValidateFacultyIdIsSet();
-        if (teacher.FacultyId != _facultyId)
+        if (_facultyId is null || !this._facultyId.Equals(teacher.FacultyId))
             throw OgnpCourseException.WrongFacultyId();
         _teachers.Add(teacher);
         return this;
@@ -39,7 +37,8 @@ public class OgnpCourseBuilder
 
     public OgnpCourse Build()
     {
-        ValidateFacultyIdIsSet();
+        if (_facultyId is null)
+            throw OgnpCourseException.WrongFacultyId();
         OgnpCourse result = new OgnpCourse(_facultyId, _teachers, _streams);
         Reset();
         return result;
@@ -47,14 +46,8 @@ public class OgnpCourseBuilder
 
     public void Reset()
     {
-        _facultyIdIsSet = false;
+        _facultyId = null;
         _streams = new ();
         _teachers = new ();
-    }
-
-    private void ValidateFacultyIdIsSet()
-    {
-        if (!_facultyIdIsSet)
-            throw OgnpCourseException.WrongFacultyId();
     }
 }
