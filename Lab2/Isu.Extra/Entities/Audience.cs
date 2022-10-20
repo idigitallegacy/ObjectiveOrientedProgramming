@@ -5,48 +5,48 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Models;
 
-public class Audience : IScheduler, IReadOnlyAudience, IEquatable<Audience>
+public class AudienceDto : IScheduler, IAudienceDto, IEquatable<AudienceDto>
 {
-    private Schedule _schedule;
+    private ScheduleDto _scheduleDto;
     private int _number;
 
-    public Audience(int number)
+    public AudienceDto(int number)
     {
         if (number < 0)
             throw SchedulerException.WrongAudienceNumber(number);
         _number = number;
-        _schedule = new Schedule();
+        _scheduleDto = new ScheduleDto();
     }
 
-    public Audience(IReadOnlyAudience copiedAudience)
+    public AudienceDto(IAudienceDto copiedAudienceDto)
     {
-        _schedule = new Schedule(copiedAudience.Schedule);
-        _number = copiedAudience.Number;
+        _scheduleDto = new ScheduleDto(copiedAudienceDto.ScheduleDto);
+        _number = copiedAudienceDto.Number;
     }
 
-    public IReadOnlySchedule Schedule => _schedule;
+    public IScheduleDto ScheduleDto => _scheduleDto;
     public int Number => _number;
 
-    public void AddLesson(Lesson lesson)
+    public void AddLesson(LessonDto lessonDto)
     {
-        _schedule.AddLesson(lesson);
+        _scheduleDto.AddLesson(lessonDto);
     }
 
-    public void RemoveLesson(Lesson lesson)
+    public void RemoveLesson(LessonDto lessonDto)
     {
-        _schedule.RemoveLesson(lesson);
+        _scheduleDto.RemoveLesson(lessonDto);
     }
 
-    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
-        return _schedule.FindLesson(dayOfWeek, startTime, endTime);
+        return _scheduleDto.FindLesson(dayOfWeek, startTime, endTime);
     }
 
-    public bool Equals(Audience? other)
+    public bool Equals(AudienceDto? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _schedule.Equals(other._schedule) && _number == other._number;
+        return _scheduleDto.Equals(other._scheduleDto) && _number == other._number;
     }
 
     public override bool Equals(object? obj)
@@ -54,11 +54,11 @@ public class Audience : IScheduler, IReadOnlyAudience, IEquatable<Audience>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((Audience)obj);
+        return Equals((AudienceDto)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_schedule, _number);
+        return HashCode.Combine(_scheduleDto, _number);
     }
 }

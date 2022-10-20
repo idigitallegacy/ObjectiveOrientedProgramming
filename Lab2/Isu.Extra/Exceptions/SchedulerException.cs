@@ -2,7 +2,7 @@ namespace Isu.Extra.Exceptions;
 
 public class SchedulerException : Exception
 {
-    public SchedulerException(string message = "")
+    private SchedulerException(string message = "")
         : base(message) { }
 
     public static SchedulerException TimeIsAlreadyScheduled(

@@ -8,43 +8,43 @@ namespace Isu.Extra.Extensions;
 
 public static class Typecast
 {
-    public static Audience ToAudience(this IReadOnlyAudience audience)
+    public static AudienceDto ToAudience(this IAudienceDto audienceDto)
     {
-        return new Audience(audience);
+        return new AudienceDto(audienceDto);
     }
 
-    public static ExtendedGroup ToExtendedGroup(this IReadOnlyExtendedGroup group)
+    public static ExtendedGroupDto ToExtendedGroup(this IExtendedGroupDto groupDto)
     {
-        return new ExtendedGroup(group);
+        return new ExtendedGroupDto(groupDto);
     }
 
-    public static ExtendedStudent ToExtendedStudent(this IReadOnlyExtendedStudent student)
+    public static ExtendedStudentDto ToExtendedStudent(this IExtendedStudentDto studentDto)
     {
-        return new ExtendedStudent(student);
+        return new ExtendedStudentDto(studentDto);
     }
 
-    public static Lesson ToLesson(this IReadOnlyLesson lesson)
+    public static LessonDto ToLesson(this ILessonDto lessonDto)
     {
-        return new Lesson(lesson);
+        return new LessonDto(lessonDto);
     }
 
-    public static OgnpCourse ToOgnpCourse(this IReadOnlyOgnpCourse course)
+    public static OgnpCourseDto ToOgnpCourse(this IOgnpCourseDto courseDto)
     {
-        return new OgnpCourse(course);
+        return new OgnpCourseDto(courseDto);
     }
 
-    public static Schedule ToSchedule(this IReadOnlySchedule schedule)
+    public static ScheduleDto ToSchedule(this IScheduleDto scheduleDto)
     {
-        return new Schedule(schedule);
+        return new ScheduleDto(scheduleDto);
     }
 
-    public static StudyStream ToStream(this IReadOnlyStudyStream stream)
+    public static StudyStreamDto ToStream(this IStudyStreamDto streamDto)
     {
-        return new StudyStream(stream);
+        return new StudyStreamDto(streamDto);
     }
 
-    public static Teacher ToTeacher(this IReadOnlyTeacher teacher)
+    public static TeacherDto ToTeacher(this ITeacherDto teacherDto)
     {
-        return new Teacher(teacher);
+        return new TeacherDto(teacherDto);
     }
 }

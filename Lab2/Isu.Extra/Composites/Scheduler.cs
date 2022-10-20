@@ -4,9 +4,9 @@ namespace Isu.Extra.Composites;
 
 public interface IScheduler
 {
-    public void AddLesson(Lesson lesson);
+    public void AddLesson(LessonDto lessonDto);
 
-    public void RemoveLesson(Lesson lesson);
+    public void RemoveLesson(LessonDto lessonDto);
 
-    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
+    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
 }

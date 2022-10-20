@@ -9,63 +9,66 @@ using Isu.Models;
 
 namespace Isu.Extra.Entities;
 
-public class OgnpCourse : IReadOnlyOgnpCourse, IEquatable<OgnpCourse>
+public class OgnpCourseDto : IOgnpCourseDto, IEquatable<OgnpCourseDto>
 {
-    private List<StudyStream> _streams;
-    private List<Teacher> _teachers;
+    private List<StudyStreamDto> _streams;
+    private List<TeacherDto> _teachers;
     private FacultyId _facultyId;
 
-    public OgnpCourse(FacultyId facultyId, List<Teacher> teachers, List<StudyStream> streams)
+    public OgnpCourseDto(FacultyId facultyId, List<TeacherDto> teachers, List<StudyStreamDto> streams)
     {
         if (teachers.Count == 0)
             throw OgnpCourseException.TooFewTeachers();
         if (streams.Count == 0)
             throw OgnpCourseException.TooFewStreams();
-        _streams = new List<StudyStream>(streams);
-        _teachers = new List<Teacher>(teachers);
+        _streams = new List<StudyStreamDto>(streams);
+        _teachers = new List<TeacherDto>(teachers);
         _facultyId = facultyId;
     }
 
-    public OgnpCourse(IReadOnlyOgnpCourse copiedCourse)
+    public OgnpCourseDto(IOgnpCourseDto copiedCourseDto)
     {
-        _streams = new List<StudyStream>(copiedCourse.Streams.Select(roStream => roStream.ToStream()));
-        _teachers = new List<Teacher>(copiedCourse.Teachers.Select(roTeacher => roTeacher.ToTeacher()));
-        _facultyId = new FacultyId(copiedCourse.FacultyId);
+        _streams = new List<StudyStreamDto>(copiedCourseDto.Streams.Select(roStream => roStream.ToStream()));
+        _teachers = new List<TeacherDto>(copiedCourseDto.Teachers.Select(roTeacher => roTeacher.ToTeacher()));
+        _facultyId = new FacultyId(copiedCourseDto.FacultyId);
     }
 
-    public IReadOnlyCollection<IReadOnlyStudyStream> Streams => _streams;
-    public IReadOnlyCollection<IReadOnlyTeacher> Teachers => _teachers;
+    public IReadOnlyCollection<IStudyStreamDto> Streams => _streams.AsReadOnly();
+    public IReadOnlyCollection<ITeacherDto> Teachers => _teachers.AsReadOnly();
     public FacultyId FacultyId => _facultyId;
 
-    public void AddStudent(GroupName streamName, IReadOnlyExtendedStudent student)
+    public void AddStudent(GroupName streamName, IExtendedStudentDto studentDto)
     {
-        GetStream(streamName).AddStudent(student);
+        GetStream(streamName).AddStudent(studentDto);
     }
 
-    public void RemoveStudent(IReadOnlyExtendedStudent student)
+    public void RemoveStudent(IExtendedStudentDto studentDto)
     {
         _streams
-            .First(stream => stream.Group.Students.Contains(student))
-            .RemoveStudent(student);
+            .First(stream => stream.GroupDto.Students.Contains(studentDto))
+            .RemoveStudent(studentDto);
     }
 
-    public IReadOnlyTeacher? FindTeacher(string name)
+    public ITeacherDto? FindTeacher(string name)
     {
         return _teachers.FirstOrDefault(teacher => teacher.Name == name);
     }
 
-    public void AddLesson(StudyStream stream, Lesson lesson)
+    public void AddLesson(StudyStreamDto streamDto, LessonDto lessonDto)
     {
-        ValidateStreamLesson(stream, lesson);
-        stream.AddLesson(lesson);
+        ValidateStreamLesson(streamDto, lessonDto);
+        StudyStreamDto? rwStream = _streams.Find(needleStream => needleStream.Equals(streamDto));
+        if (rwStream is null)
+            throw OgnpCourseException.StreamNotFound(streamDto.GroupDto.GroupName);
+        rwStream.AddLesson(lessonDto);
     }
 
-    public void RemoveLesson(StudyStream stream, Lesson lesson)
+    public void RemoveLesson(StudyStreamDto streamDto, LessonDto lessonDto)
     {
-        stream.RemoveLesson(lesson);
+        streamDto.RemoveLesson(lessonDto);
     }
 
-    public bool Equals(OgnpCourse? other)
+    public bool Equals(OgnpCourseDto? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -77,7 +80,7 @@ public class OgnpCourse : IReadOnlyOgnpCourse, IEquatable<OgnpCourse>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((OgnpCourse)obj);
+        return Equals((OgnpCourseDto)obj);
     }
 
     public override int GetHashCode()
@@ -85,17 +88,15 @@ public class OgnpCourse : IReadOnlyOgnpCourse, IEquatable<OgnpCourse>
         return HashCode.Combine(_streams, _teachers, _facultyId);
     }
 
-    private StudyStream GetStream(GroupName streamName)
+    private StudyStreamDto GetStream(GroupName streamName)
     {
-        return _streams.FirstOrDefault(stream => stream.Group.GroupName.Name == streamName.Name) ??
+        return _streams.FirstOrDefault(stream => stream.GroupDto.GroupName.Name == streamName.Name) ??
                throw OgnpCourseException.StreamNotFound(streamName);
     }
 
-    private void ValidateStreamLesson(StudyStream stream, Lesson lesson)
+    private void ValidateStreamLesson(StudyStreamDto streamDto, LessonDto lessonDto)
     {
-        if (!_teachers.Contains(lesson.Teacher))
-            throw OgnpCourseException.TeacherNotFound(lesson.Teacher);
-        if (stream.Schedule.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw SchedulerException.TimeIsAlreadyScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
+        if (streamDto.ScheduleDto.TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime))
+            throw SchedulerException.TimeIsAlreadyScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime);
     }
 }

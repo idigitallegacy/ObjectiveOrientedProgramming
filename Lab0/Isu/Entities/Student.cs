@@ -5,15 +5,15 @@ namespace Isu.Entities;
 
 public class Student
 {
-    public Student(string name, Group group, int id)
+    public Student(string name, Group groupDto, int id)
     {
         Name = name;
-        Group = group;
+        GroupDto = groupDto;
         Id = id;
     }
 
     public string Name { get; }
-    public Group Group { get; private set; }
+    public Group GroupDto { get; private set; }
     public int Id { get; }
 
     public static bool operator !=(Student student1, Student student2)
@@ -29,8 +29,8 @@ public class Student
     public void ChangeGroup(Group newGroup)
     {
         newGroup.AddStudent(this);
-        Group.RemoveStudent(this);
-        Group = newGroup;
+        GroupDto.RemoveStudent(this);
+        GroupDto = newGroup;
     }
 
     public override bool Equals(object? obj)
@@ -41,6 +41,6 @@ public class Student
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name, Group, Id);
+        return HashCode.Combine(Name, GroupDto, Id);
     }
 }

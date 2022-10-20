@@ -4,11 +4,11 @@ using Isu.Extra.Models;
 
 namespace Isu.Extra.Wrappers;
 
-public interface IReadOnlyExtendedStudent
+public interface IExtendedStudentDto
 {
-    public IReadOnlyCollection<IReadOnlyOgnpCourse?> OgnpCourses { get; }
+    public IReadOnlyCollection<IOgnpCourseDto?> OgnpCourses { get; }
     public FacultyId FacultyId { get; }
-    public IReadOnlyExtendedGroup ExtendedGroup { get; }
+    public IExtendedGroupDto ExtendedGroupDto { get; }
     public string Name { get; }
     public Group Group { get; }
     public int Id { get; }

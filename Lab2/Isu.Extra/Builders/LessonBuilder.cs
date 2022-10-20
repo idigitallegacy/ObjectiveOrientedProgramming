@@ -12,10 +12,10 @@ public class LessonBuilder
     private DayOfWeek _weekDay;
     private TimeSpan _startTime;
     private TimeSpan _endTime;
-    private Teacher? _teacher;
-    private Audience? _audience;
-    private StudyStream? _associatedStream;
-    private ExtendedGroup? _associatedGroup;
+    private TeacherDto? _teacher;
+    private AudienceDto? _audience;
+    private StudyStreamDto? _associatedStream;
+    private ExtendedGroupDto? _associatedGroup;
 
     public LessonBuilder WeekDay(DayOfWeek weekDay)
     {
@@ -35,37 +35,37 @@ public class LessonBuilder
         return this;
     }
 
-    public LessonBuilder Teacher(Teacher teacher)
+    public LessonBuilder Teacher(TeacherDto teacherDto)
     {
-        _teacher = teacher;
+        _teacher = teacherDto;
         return this;
     }
 
-    public LessonBuilder Audience(Audience audience)
+    public LessonBuilder Audience(AudienceDto audienceDto)
     {
-        _audience = audience;
+        _audience = audienceDto;
         return this;
     }
 
-    public LessonBuilder AssociatedGroup(ExtendedGroup groupName)
+    public LessonBuilder AssociatedGroup(ExtendedGroupDto groupDtoName)
     {
-        _associatedGroup = groupName;
+        _associatedGroup = groupDtoName;
         return this;
     }
 
-    public LessonBuilder AssociatedStream(StudyStream stream)
+    public LessonBuilder AssociatedStream(StudyStreamDto streamDto)
     {
-        _associatedStream = stream;
+        _associatedStream = streamDto;
         return this;
     }
 
-    public Lesson Build()
+    public LessonDto Build()
     {
         if (_teacher is null || _audience is null)
             throw LessonException.NoTeacherOrAudience();
-        Lesson lesson = new Lesson(_weekDay, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
+        LessonDto lessonDto = new LessonDto(_weekDay, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
         Reset();
-        return lesson;
+        return lessonDto;
     }
 
     private void Reset()

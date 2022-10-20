@@ -5,7 +5,7 @@ namespace Isu.Extra.Exceptions;
 
 public class OgnpCourseException : Exception
 {
-    public OgnpCourseException(string message = "")
+    private OgnpCourseException(string message = "")
         : base(message) { }
 
     public static OgnpCourseException TooFewTeachers()
@@ -23,9 +23,9 @@ public class OgnpCourseException : Exception
         return new OgnpCourseException($"Stream named {steamName.Name} not found.");
     }
 
-    public static OgnpCourseException TeacherNotFound(Teacher teacher)
+    public static OgnpCourseException TeacherNotFound(TeacherDto teacherDto)
     {
-        return new OgnpCourseException($"Teacher {teacher.Name} not found.");
+        return new OgnpCourseException($"Teacher {teacherDto.Name} not found.");
     }
 
     public static OgnpCourseException WrongFacultyId()

@@ -4,11 +4,11 @@ using Isu.Extra.Models;
 
 namespace Isu.Extra.Wrappers;
 
-public interface IReadOnlySchedule
+public interface IScheduleDto
 {
-    public IReadOnlyCollection<Lesson> Lessons { get; }
+    public IReadOnlyCollection<LessonDto> Lessons { get; }
 
-    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
+    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
 
     public bool TimeIsScheduled(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
 }

@@ -5,13 +5,13 @@ using Isu.Models;
 
 namespace Isu.Extra.Wrappers;
 
-public interface IReadOnlyLesson
+public interface ILessonDto
 {
     public DayOfWeek DayOfWeek { get; }
-    public Audience Audience { get; }
+    public AudienceDto AudienceDto { get; }
     public TimeSpan StartTime { get; }
     public TimeSpan EndTime { get; }
-    public Teacher Teacher { get; }
-    public StudyStream? AssociatedStream { get; }
-    public ExtendedGroup? AssociatedGroup { get; }
+    public TeacherDto TeacherDto { get; }
+    public StudyStreamDto? AssociatedStream { get; }
+    public ExtendedGroupDto? AssociatedGroup { get; }
 }

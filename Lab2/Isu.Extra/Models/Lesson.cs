@@ -7,74 +7,67 @@ using Stream = System.IO.Stream;
 
 namespace Isu.Extra.Models;
 
-public class Lesson : IReadOnlyLesson, IEquatable<Lesson>
+public class LessonDto : ILessonDto, IEquatable<LessonDto>
 {
-    private DayOfWeek _dayOfWeek;
-    private TimeSpan _startTime;
-    private TimeSpan _endTime;
-    private Teacher _teacher;
-    private Audience _audience;
-    private StudyStream? _associatedStream;
-    private ExtendedGroup? _associatedGroup;
-
-    public Lesson(
+    public LessonDto(
         DayOfWeek dayOfWeek,
         TimeSpan startTime,
         TimeSpan endTime,
-        Teacher teacher,
-        Audience audience,
-        StudyStream? associatedStream = null,
-        ExtendedGroup? associatedGroup = null)
+        TeacherDto teacherDto,
+        AudienceDto audienceDto,
+        StudyStreamDto? associatedStream = null,
+        ExtendedGroupDto? associatedGroup = null)
     {
         if (associatedStream is null && associatedGroup is null)
             throw LessonException.NoAssignee();
-        _dayOfWeek = dayOfWeek;
-        _startTime = startTime;
-        _endTime = endTime;
-        _teacher = teacher;
-        _audience = audience;
-        _associatedStream = associatedStream;
-        _associatedGroup = associatedGroup;
+        DayOfWeek = dayOfWeek;
+        StartTime = startTime;
+        EndTime = endTime;
+        TeacherDto = teacherDto;
+        AudienceDto = audienceDto;
+        AssociatedStream = associatedStream;
+        AssociatedGroup = associatedGroup;
     }
 
-    public Lesson(IReadOnlyLesson copiedLesson)
+    public LessonDto(ILessonDto copiedLessonDto)
     {
-        _dayOfWeek = copiedLesson.DayOfWeek;
-        _startTime = copiedLesson.StartTime;
-        _endTime = copiedLesson.EndTime;
-        _teacher = new Teacher(copiedLesson.Teacher);
-        _audience = new Audience(copiedLesson.Audience);
-        if (copiedLesson.AssociatedStream is not null)
-            _associatedStream = new StudyStream(copiedLesson.AssociatedStream);
-        if (copiedLesson.AssociatedGroup is not null)
-            _associatedGroup = new ExtendedGroup(copiedLesson.AssociatedGroup);
+        DayOfWeek = copiedLessonDto.DayOfWeek;
+        StartTime = copiedLessonDto.StartTime;
+        EndTime = copiedLessonDto.EndTime;
+        TeacherDto = new TeacherDto(copiedLessonDto.TeacherDto);
+        AudienceDto = new AudienceDto(copiedLessonDto.AudienceDto);
+        if (copiedLessonDto.AssociatedStream is not null)
+            AssociatedStream = new StudyStreamDto(copiedLessonDto.AssociatedStream);
+        if (copiedLessonDto.AssociatedGroup is not null)
+            AssociatedGroup = new ExtendedGroupDto(copiedLessonDto.AssociatedGroup);
     }
 
-    public DayOfWeek DayOfWeek => _dayOfWeek;
-    public Audience Audience => _audience;
-    public TimeSpan StartTime => _startTime;
-    public TimeSpan EndTime => _endTime;
-    public Teacher Teacher => _teacher;
-    public StudyStream? AssociatedStream => _associatedStream;
-    public ExtendedGroup? AssociatedGroup => _associatedGroup;
+    public DayOfWeek DayOfWeek { get; }
+    public AudienceDto AudienceDto { get; }
+    public TimeSpan StartTime { get; }
+    public TimeSpan EndTime { get; }
+
+    public TeacherDto TeacherDto { get; }
+    public StudyStreamDto? AssociatedStream { get; }
+    public ExtendedGroupDto? AssociatedGroup { get; }
 
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((Lesson)obj);
+        return Equals((LessonDto)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine((int)_dayOfWeek, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
+        return HashCode.Combine((int)DayOfWeek, StartTime, EndTime, TeacherDto, AudienceDto, AssociatedStream, AssociatedGroup);
     }
 
-    public bool Equals(Lesson? other)
+    public bool Equals(LessonDto? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _dayOfWeek == other._dayOfWeek && _startTime.Equals(other._startTime) && _endTime.Equals(other._endTime) && _teacher.Equals(other._teacher) && _audience.Equals(other._audience) && Equals(_associatedStream, other._associatedStream) && Equals(_associatedGroup, other._associatedGroup);
+        return DayOfWeek == other.DayOfWeek && StartTime.Equals(other.StartTime) && EndTime.Equals(other.EndTime) && TeacherDto.Equals(other.TeacherDto) && AudienceDto.Equals(other.AudienceDto) && Equals(AssociatedStream, other.AssociatedStream) && Equals(AssociatedGroup, other.AssociatedGroup);
     }
 }

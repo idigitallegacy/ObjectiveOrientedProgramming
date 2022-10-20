@@ -5,35 +5,35 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Entities;
 
-public class Schedule : IScheduler, IReadOnlySchedule, IEquatable<Schedule>
+public class ScheduleDto : IScheduler, IScheduleDto, IEquatable<ScheduleDto>
 {
-    private List<Lesson> _lessons = new ();
+    private List<LessonDto> _lessons = new ();
 
-    public Schedule() { }
-    public Schedule(IReadOnlySchedule copiedSchedule)
+    public ScheduleDto() { }
+    public ScheduleDto(IScheduleDto copiedScheduleDto)
     {
-        _lessons = new List<Lesson>(copiedSchedule.Lessons);
+        _lessons = new List<LessonDto>(copiedScheduleDto.Lessons);
     }
 
-    IReadOnlyCollection<Lesson> IReadOnlySchedule.Lessons => _lessons;
+    IReadOnlyCollection<LessonDto> IScheduleDto.Lessons => _lessons.AsReadOnly();
 
-    public IReadOnlyCollection<Lesson> Lessons => _lessons;
+    public IReadOnlyCollection<LessonDto> Lessons => _lessons;
 
-    public void AddLesson(Lesson lesson)
+    public void AddLesson(LessonDto lessonDto)
     {
-        if (TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw SchedulerException.TimeIsAlreadyScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
-        _lessons.Add(lesson);
+        if (TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime))
+            throw SchedulerException.TimeIsAlreadyScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime);
+        _lessons.Add(lessonDto);
     }
 
-    public void RemoveLesson(Lesson lesson)
+    public void RemoveLesson(LessonDto lessonDto)
     {
-        if (!TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
-            throw SchedulerException.TimeIsNotScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
-        _lessons.Add(lesson);
+        if (!TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime))
+            throw SchedulerException.TimeIsNotScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime);
+        _lessons.Add(lessonDto);
     }
 
-    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _lessons.FirstOrDefault(lesson =>
         {
@@ -58,7 +58,7 @@ public class Schedule : IScheduler, IReadOnlySchedule, IEquatable<Schedule>
             });
     }
 
-    public bool Equals(Schedule? other)
+    public bool Equals(ScheduleDto? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -70,7 +70,7 @@ public class Schedule : IScheduler, IReadOnlySchedule, IEquatable<Schedule>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((Schedule)obj);
+        return Equals((ScheduleDto)obj);
     }
 
     public override int GetHashCode()

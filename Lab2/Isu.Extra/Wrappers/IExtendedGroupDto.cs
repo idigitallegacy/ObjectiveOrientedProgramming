@@ -5,11 +5,11 @@ using Isu.Services;
 
 namespace Isu.Extra.Wrappers;
 
-public interface IReadOnlyExtendedGroup
+public interface IExtendedGroupDto
 {
-    public IReadOnlySchedule Schedule { get; }
+    public IScheduleDto ScheduleDto { get; }
     public GroupName GroupName { get; }
-    public IReadOnlyCollection<IReadOnlyExtendedStudent> Students { get; }
+    public IReadOnlyCollection<IExtendedStudentDto> Students { get; }
     public int Capacity { get; }
     public FacultyId FacultyId { get; }
 }

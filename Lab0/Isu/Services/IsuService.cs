@@ -79,10 +79,10 @@ public class IsuService : IIsuService
         if (serviceStoredStudent is null)
             throw new IsuException("Unable to change student's group: Student not found at IsuService.");
 
-        if (serviceStoredStudent.Group != student.Group)
+        if (serviceStoredStudent.GroupDto != student.GroupDto)
             throw new IsuException("Unable to change student's group: Already removed from old group.");
 
-        if (serviceStoredStudent.Group == newGroup)
+        if (serviceStoredStudent.GroupDto == newGroup)
             throw new IsuException("Unable to change student's group: Already exists at the new group.");
     }
 }

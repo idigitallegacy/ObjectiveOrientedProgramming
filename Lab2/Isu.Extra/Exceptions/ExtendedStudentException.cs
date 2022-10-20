@@ -4,7 +4,7 @@ namespace Isu.Extra.Exceptions;
 
 public class ExtendedStudentException : Exception
 {
-    public ExtendedStudentException(string message = "")
+    private ExtendedStudentException(string message = "")
         : base(message) { }
 
     public static ExtendedStudentException StudentHasAllOgnp()

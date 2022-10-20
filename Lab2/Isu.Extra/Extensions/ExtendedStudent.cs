@@ -8,40 +8,43 @@ using Isu.Services;
 
 namespace Isu.Extra.Extensions;
 
-public class ExtendedStudent : Student, IReadOnlyExtendedStudent, IEquatable<Student>
+public class ExtendedStudentDto : Student, IExtendedStudentDto, IEquatable<Student>
 {
-    private List<IReadOnlyOgnpCourse?> _ognpCourses = new ();
-    private FacultyId _facultyId;
-    private IReadOnlyExtendedGroup _group;
+    private List<IOgnpCourseDto?> _ognpCourses = new List<IOgnpCourseDto?> { null, null };
+    private IExtendedGroupDto _groupDto;
 
-    public ExtendedStudent(string name, ExtendedGroup group, int id)
-        : base(name, group, id)
+    public ExtendedStudentDto(string name, ExtendedGroupDto groupDto, int id)
+        : base(name, groupDto, id)
     {
-        _facultyId = group.GroupName.GetFacultyId();
-        _group = group;
+        FacultyId = groupDto.GroupName.GetFacultyId();
+        _groupDto = groupDto;
     }
 
-    public ExtendedStudent(IReadOnlyExtendedStudent copiedStudent)
-        : base(copiedStudent.Name, copiedStudent.Group, copiedStudent.Id)
+    public ExtendedStudentDto(IExtendedStudentDto copiedStudentDto)
+        : base(copiedStudentDto.Name, copiedStudentDto.Group, copiedStudentDto.Id)
     {
-        _facultyId = new FacultyId(copiedStudent.FacultyId);
-        _group = new ExtendedGroup(copiedStudent.ExtendedGroup);
+        FacultyId = new FacultyId(copiedStudentDto.FacultyId);
+        _groupDto = new ExtendedGroupDto(copiedStudentDto.ExtendedGroupDto);
     }
 
-    public FacultyId FacultyId => _facultyId;
-    public IReadOnlyExtendedGroup ExtendedGroup => _group;
+    public FacultyId FacultyId { get; }
+    public IExtendedGroupDto ExtendedGroupDto => _groupDto;
+    public Group Group => _groupDto.ToExtendedGroup();
 
-    public IReadOnlyCollection<IReadOnlyOgnpCourse?> OgnpCourses => _ognpCourses;
+    public IReadOnlyCollection<IOgnpCourseDto?> OgnpCourses => _ognpCourses.AsReadOnly();
 
-    public void AddOgnpCourse(IReadOnlyOgnpCourse course)
+    public void AddOgnpCourse(IOgnpCourseDto courseDto)
     {
-        if (_ognpCourses.Count == 2)
+        if (_ognpCourses.All(needleCourse => needleCourse is not null))
             throw ExtendedStudentException.StudentHasAllOgnp();
+
+        if (_ognpCourses[0] is null)
+            _ognpCourses[0] = courseDto;
         else
-            _ognpCourses.Add(course);
+            _ognpCourses[1] = courseDto;
     }
 
-    public void ChangeOgnpCourse(IReadOnlyOgnpCourse? oldOgnpCourse, IReadOnlyOgnpCourse? newOgnpCourse)
+    public void ChangeOgnpCourse(IOgnpCourseDto? oldOgnpCourse, IOgnpCourseDto? newOgnpCourse)
     {
         int needleCourseIndex = _ognpCourses.IndexOf(oldOgnpCourse);
         if (needleCourseIndex == -1)
@@ -59,16 +62,16 @@ public class ExtendedStudent : Student, IReadOnlyExtendedStudent, IEquatable<Stu
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((ExtendedStudent)obj);
+        return Equals((ExtendedStudentDto)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(base.GetHashCode(), _ognpCourses, _facultyId, _group);
+        return HashCode.Combine(base.GetHashCode(), _ognpCourses, FacultyId, _groupDto);
     }
 
-    protected bool Equals(ExtendedStudent other)
+    protected bool Equals(ExtendedStudentDto other)
     {
-        return base.Equals(other) && _ognpCourses.Equals(other._ognpCourses) && _facultyId.Equals(other._facultyId) && _group.Equals(other._group);
+        return base.Equals(other);
     }
 }
