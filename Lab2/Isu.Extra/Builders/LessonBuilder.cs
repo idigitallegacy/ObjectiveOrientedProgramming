@@ -13,7 +13,7 @@ public class LessonBuilder
     private TimeSpan _startTime;
     private TimeSpan _endTime;
     private TeacherDto? _teacher;
-    private AudienceDto? _audience;
+    private Audience? _audience;
     private StudyStreamDto? _associatedStream;
     private ExtendedGroupDto? _associatedGroup;
 
@@ -41,9 +41,9 @@ public class LessonBuilder
         return this;
     }
 
-    public LessonBuilder Audience(AudienceDto audienceDto)
+    public LessonBuilder Audience(Audience audience)
     {
-        _audience = audienceDto;
+        _audience = audience;
         return this;
     }
 

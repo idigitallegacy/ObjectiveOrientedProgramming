@@ -5,12 +5,12 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Models;
 
-public class AudienceDto : IScheduler, IAudienceDto, IEquatable<AudienceDto>
+public class Audience : IScheduler, IEquatable<Audience>
 {
     private ScheduleDto _scheduleDto;
     private int _number;
 
-    public AudienceDto(int number)
+    public Audience(int number)
     {
         if (number < 0)
             throw SchedulerException.WrongAudienceNumber(number);
@@ -18,10 +18,10 @@ public class AudienceDto : IScheduler, IAudienceDto, IEquatable<AudienceDto>
         _scheduleDto = new ScheduleDto();
     }
 
-    public AudienceDto(IAudienceDto copiedAudienceDto)
+    public Audience(AudienceDto copiedAudience)
     {
-        _scheduleDto = new ScheduleDto(copiedAudienceDto.ScheduleDto);
-        _number = copiedAudienceDto.Number;
+        _scheduleDto = new ScheduleDto(copiedAudience.ScheduleDto);
+        _number = copiedAudience.Number;
     }
 
     public IScheduleDto ScheduleDto => _scheduleDto;
@@ -42,7 +42,7 @@ public class AudienceDto : IScheduler, IAudienceDto, IEquatable<AudienceDto>
         return _scheduleDto.FindLesson(dayOfWeek, startTime, endTime);
     }
 
-    public bool Equals(AudienceDto? other)
+    public bool Equals(Audience? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -54,7 +54,7 @@ public class AudienceDto : IScheduler, IAudienceDto, IEquatable<AudienceDto>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((AudienceDto)obj);
+        return Equals((Audience)obj);
     }
 
     public override int GetHashCode()

@@ -14,7 +14,7 @@ public class LessonDto : ILessonDto, IEquatable<LessonDto>
         TimeSpan startTime,
         TimeSpan endTime,
         TeacherDto teacherDto,
-        AudienceDto audienceDto,
+        Audience audience,
         StudyStreamDto? associatedStream = null,
         ExtendedGroupDto? associatedGroup = null)
     {
@@ -24,7 +24,7 @@ public class LessonDto : ILessonDto, IEquatable<LessonDto>
         StartTime = startTime;
         EndTime = endTime;
         TeacherDto = teacherDto;
-        AudienceDto = audienceDto;
+        AudienceDto = new AudienceDto(audience);
         AssociatedStream = associatedStream;
         AssociatedGroup = associatedGroup;
     }
@@ -35,7 +35,7 @@ public class LessonDto : ILessonDto, IEquatable<LessonDto>
         StartTime = copiedLessonDto.StartTime;
         EndTime = copiedLessonDto.EndTime;
         TeacherDto = new TeacherDto(copiedLessonDto.TeacherDto);
-        AudienceDto = new AudienceDto(copiedLessonDto.AudienceDto);
+        AudienceDto = new AudienceDto(copiedLessonDto.AudienceDto.ToAudience());
         if (copiedLessonDto.AssociatedStream is not null)
             AssociatedStream = new StudyStreamDto(copiedLessonDto.AssociatedStream);
         if (copiedLessonDto.AssociatedGroup is not null)

@@ -8,9 +8,9 @@ namespace Isu.Extra.Extensions;
 
 public static class Typecast
 {
-    public static AudienceDto ToAudience(this IAudienceDto audienceDto)
+    public static Audience ToAudience(this AudienceDto audienceDto)
     {
-        return new AudienceDto(audienceDto);
+        return new Audience(audienceDto);
     }
 
     public static ExtendedGroupDto ToExtendedGroup(this IExtendedGroupDto groupDto)

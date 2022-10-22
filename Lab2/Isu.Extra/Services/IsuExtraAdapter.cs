@@ -86,7 +86,7 @@ public class IsuExtraAdapter : IIsuService
         return _coreService.AddStream(name, capacity);
     }
 
-    public IAudienceDto AddAudience()
+    public AudienceDto AddAudience()
     {
         return _coreService.AddAudience();
     }

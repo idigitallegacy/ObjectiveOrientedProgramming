@@ -50,9 +50,9 @@ public class IsuExtraCore
         return teacherDto;
     }
 
-    public IAudienceDto AddAudience()
+    public AudienceDto AddAudience()
     {
-        AudienceDto audienceDto = new AudienceDto(_audienceNumberGenerator.Number);
+        AudienceDto audienceDto = new AudienceDto(new Audience(_audienceNumberGenerator.Number));
         _audienceNumberGenerator.Update();
         _audiences.Add(audienceDto);
         return audienceDto;
