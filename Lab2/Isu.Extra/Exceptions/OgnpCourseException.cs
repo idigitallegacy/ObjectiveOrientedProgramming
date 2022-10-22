@@ -23,9 +23,9 @@ public class OgnpCourseException : Exception
         return new OgnpCourseException($"Stream named {steamName.Name} not found.");
     }
 
-    public static OgnpCourseException TeacherNotFound(TeacherDto teacherDto)
+    public static OgnpCourseException TeacherNotFound(Teacher teacher)
     {
-        return new OgnpCourseException($"Teacher {teacherDto.Name} not found.");
+        return new OgnpCourseException($"Teacher {teacher.Name} not found.");
     }
 
     public static OgnpCourseException WrongFacultyId()

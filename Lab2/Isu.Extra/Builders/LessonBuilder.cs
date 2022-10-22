@@ -12,10 +12,10 @@ public class LessonBuilder
     private DayOfWeek _weekDay;
     private TimeSpan _startTime;
     private TimeSpan _endTime;
-    private TeacherDto? _teacher;
+    private Teacher? _teacher;
     private Audience? _audience;
-    private StudyStreamDto? _associatedStream;
-    private ExtendedGroupDto? _associatedGroup;
+    private StudyStream? _associatedStream;
+    private ExtendedGroup? _associatedGroup;
 
     public LessonBuilder WeekDay(DayOfWeek weekDay)
     {
@@ -35,9 +35,9 @@ public class LessonBuilder
         return this;
     }
 
-    public LessonBuilder Teacher(TeacherDto teacherDto)
+    public LessonBuilder Teacher(Teacher teacher)
     {
-        _teacher = teacherDto;
+        _teacher = teacher;
         return this;
     }
 
@@ -47,25 +47,25 @@ public class LessonBuilder
         return this;
     }
 
-    public LessonBuilder AssociatedGroup(ExtendedGroupDto groupDtoName)
+    public LessonBuilder AssociatedGroup(ExtendedGroup groupName)
     {
-        _associatedGroup = groupDtoName;
+        _associatedGroup = groupName;
         return this;
     }
 
-    public LessonBuilder AssociatedStream(StudyStreamDto streamDto)
+    public LessonBuilder AssociatedStream(StudyStream stream)
     {
-        _associatedStream = streamDto;
+        _associatedStream = stream;
         return this;
     }
 
-    public LessonDto Build()
+    public Lesson Build()
     {
         if (_teacher is null || _audience is null)
             throw LessonException.NoTeacherOrAudience();
-        LessonDto lessonDto = new LessonDto(_weekDay, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
+        Lesson lesson = new Lesson(_weekDay, _startTime, _endTime, _teacher, _audience, _associatedStream, _associatedGroup);
         Reset();
-        return lessonDto;
+        return lesson;
     }
 
     private void Reset()

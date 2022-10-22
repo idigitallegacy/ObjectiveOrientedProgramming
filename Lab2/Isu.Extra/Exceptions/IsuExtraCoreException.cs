@@ -32,12 +32,12 @@ public class IsuExtraCoreException : Exception
     {
         if (group is Group)
             return new IsuExtraCoreException($"Unable to find group {((Group)group).GroupName.Name}");
-        if (group is IExtendedGroupDto)
-            return new IsuExtraCoreException($"Unable to find group {((IExtendedGroupDto)group).GroupName.Name}");
+        if (group is ExtendedGroupDto)
+            return new IsuExtraCoreException($"Unable to find group {((ExtendedGroupDto)group).GroupName.Name}");
         return new IsuExtraCoreException("Unable to find group.");
     }
 
-    public static IsuExtraCoreException TeacherNotFound(ITeacherDto? teacher)
+    public static IsuExtraCoreException TeacherNotFound(TeacherDto? teacher)
     {
         if (teacher is null)
             return new IsuExtraCoreException("Unable to find teacher: null reference.");

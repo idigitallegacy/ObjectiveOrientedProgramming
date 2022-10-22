@@ -7,48 +7,48 @@ using Isu.Services;
 
 namespace Isu.Extra.Extensions;
 
-public class ExtendedGroupDto : Group, IExtendedGroupDto, IEquatable<Group>
+public class ExtendedGroup : Group, IEquatable<Group>
 {
-    private ScheduleDto _scheduleDto = new ();
-    private List<IExtendedStudentDto> _students = new ();
+    private Schedule _schedule = new ();
+    private List<ExtendedStudent> _students = new ();
 
-    public ExtendedGroupDto(GroupName groupName, int capacity)
+    public ExtendedGroup(GroupName groupName, int capacity)
         : base(groupName, capacity)
     {
         FacultyId = groupName.GetFacultyId();
         Capacity = capacity;
     }
 
-    public ExtendedGroupDto(IExtendedGroupDto copiedGroupDto)
+    public ExtendedGroup(ExtendedGroupDto copiedGroupDto)
         : base(copiedGroupDto.GroupName, copiedGroupDto.Capacity)
     {
-        _scheduleDto = new ScheduleDto(copiedGroupDto.ScheduleDto);
-        _students = new List<IExtendedStudentDto>(copiedGroupDto.Students);
+        _schedule = new Schedule(copiedGroupDto.ScheduleDto);
+        _students = new List<ExtendedStudent>(copiedGroupDto.Students.Select(student => student.ToExtendedStudent()));
         FacultyId = new FacultyId(copiedGroupDto.FacultyId);
         Capacity = copiedGroupDto.Capacity;
     }
 
-    public IScheduleDto ScheduleDto => _scheduleDto;
-    public new IReadOnlyCollection<IExtendedStudentDto> Students => _students.AsReadOnly();
+    public ScheduleDto ScheduleDto => new ScheduleDto(_schedule);
+    public new IReadOnlyCollection<ExtendedStudent> Students => _students.AsReadOnly();
     public FacultyId FacultyId { get; }
 
     public int Capacity { get; }
 
-    public void AddStudent(IExtendedStudentDto studentDto)
+    public void AddStudent(ExtendedStudentDto studentDto)
     {
         AddStudent(new Student(studentDto.Name, studentDto.Group, studentDto.Id));
-        _students.Add(studentDto);
+        _students.Add(studentDto.ToExtendedStudent());
     }
 
-    public void RemoveStudent(IExtendedStudentDto studentDto)
+    public void RemoveStudent(ExtendedStudent student)
     {
-        RemoveStudent(new Student(studentDto.Name, studentDto.Group, studentDto.Id));
-        _students.Remove(studentDto);
+        RemoveStudent(new Student(student.Name, student.Group, student.Id));
+        _students.Remove(student);
     }
 
-    public void AddLesson(ILessonDto lessonDto)
+    public void AddLesson(LessonDto lessonDto)
     {
-        _scheduleDto.AddLesson(lessonDto.ToLesson());
+        _schedule.AddLesson(lessonDto.ToLesson());
     }
 
     public bool Equals(Group? other)
@@ -61,15 +61,15 @@ public class ExtendedGroupDto : Group, IExtendedGroupDto, IEquatable<Group>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((ExtendedGroupDto)obj);
+        return Equals((ExtendedGroup)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(base.GetHashCode(), _scheduleDto, _students, FacultyId, Capacity);
+        return HashCode.Combine(base.GetHashCode(), _schedule, _students, FacultyId, Capacity);
     }
 
-    protected bool Equals(ExtendedGroupDto other)
+    protected bool Equals(ExtendedGroup other)
     {
         return base.Equals(other);
     }

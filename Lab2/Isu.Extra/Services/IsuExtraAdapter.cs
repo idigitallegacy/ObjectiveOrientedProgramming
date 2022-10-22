@@ -18,17 +18,17 @@ public class IsuExtraAdapter : IIsuService
         _coreService = coreService;
     }
 
-    public IReadOnlyCollection<OgnpCourseDto> Courses => _coreService.Courses;
-    public IReadOnlyCollection<TeacherDto> Teachers => _coreService.Teachers;
-    public IReadOnlyCollection<ExtendedGroupDto> Groups => _coreService.Groups;
-    public IReadOnlyCollection<AudienceDto> Audiences => _coreService.Audiences;
+    public IReadOnlyCollection<OgnpCourse> Courses => _coreService.Courses;
+    public IReadOnlyCollection<Teacher> Teachers => _coreService.Teachers;
+    public IReadOnlyCollection<ExtendedGroup> Groups => _coreService.Groups;
+    public IReadOnlyCollection<Audience> Audiences => _coreService.Audiences;
 
     public Group AddGroup(GroupName name)
     {
         return _oldService.AddGroup(name);
     }
 
-    public IExtendedGroupDto AddGroup(GroupName name, int capacity)
+    public ExtendedGroupDto AddGroup(GroupName name, int capacity)
     {
         _oldService.AddGroup(name);
         return _coreService.AddGroup(name, capacity);
@@ -39,7 +39,7 @@ public class IsuExtraAdapter : IIsuService
         return _oldService.AddStudent(group, name);
     }
 
-    public IExtendedStudentDto AddStudent(IExtendedGroupDto groupDto, string name)
+    public ExtendedStudentDto AddStudent(ExtendedGroupDto groupDto, string name)
     {
         _oldService.AddStudent(groupDto.ToExtendedGroup(), name);
         return _coreService.AddStudent(groupDto, name);
@@ -80,7 +80,7 @@ public class IsuExtraAdapter : IIsuService
         _oldService.ChangeStudentGroup(student, newGroup);
     }
 
-    public IStudyStreamDto AddStream(GroupName name, int capacity)
+    public StudyStreamDto AddStream(GroupName name, int capacity)
     {
         _oldService.AddGroup(name);
         return _coreService.AddStream(name, capacity);
@@ -91,67 +91,67 @@ public class IsuExtraAdapter : IIsuService
         return _coreService.AddAudience();
     }
 
-    public ITeacherDto AddTeacher(string name, FacultyId facultyId)
+    public TeacherDto AddTeacher(string name, FacultyId facultyId)
     {
         return _coreService.AddTeacher(name, facultyId);
     }
 
-    public IOgnpCourseDto AddCourse(
+    public OgnpCourseDto AddCourse(
         FacultyId facultyId,
-        ITeacherDto teacherDto,
-        IStudyStreamDto streamDto)
+        TeacherDto teacherDto,
+        StudyStreamDto streamDto)
     {
         _coreService.ConstructCourse(facultyId, teacherDto, streamDto);
         return _coreService.AppendConstructedCourse();
     }
 
-    public ILessonDto AddLesson(
+    public LessonDto AddLesson(
         DayOfWeek dayOfWeek,
         TimeSpan startTime,
         TimeSpan endTime,
-        ITeacherDto teacherDto,
-        IAudienceDto audienceDto,
-        IStudyStreamDto? stream = null,
-        IExtendedGroupDto? group = null)
+        TeacherDto teacherDto,
+        AudienceDto audienceDto,
+        StudyStreamDto? stream = null,
+        ExtendedGroupDto? group = null)
     {
         _coreService.ConstructLesson(teacherDto, audienceDto, stream, group);
-        return _coreService.ScheduleLesson(dayOfWeek, startTime, endTime);
+        return new LessonDto(_coreService.ScheduleLesson(dayOfWeek, startTime, endTime));
     }
 
     public void ScheduleCourse(
-        IOgnpCourseDto courseDto,
-        IAudienceDto audienceDto,
-        ILessonDto lessonDto)
+        OgnpCourseDto courseDto,
+        AudienceDto audienceDto,
+        LessonDto lessonDto)
     {
         _coreService.ScheduleCourse(courseDto, audienceDto, lessonDto);
     }
 
-    public void ScheduleGroup(Group group, IAudienceDto audienceDto, ILessonDto lessonDto)
+    public void ScheduleGroup(Group group, AudienceDto audienceDto, LessonDto lessonDto)
     {
         _coreService.ScheduleGroup(group, audienceDto, lessonDto);
     }
 
-    public void ScheduleStudent(IExtendedStudentDto studentDto, GroupName streamName, IOgnpCourseDto courseDto)
+    public void ScheduleStudent(ExtendedStudentDto studentDto, GroupName streamName, OgnpCourseDto courseDto)
     {
         _coreService.ScheduleStudent(studentDto, streamName, courseDto);
     }
 
-    public void UnscheduleStudent(IExtendedStudentDto studentDto, IOgnpCourseDto? oldCourse)
+    public void UnscheduleStudent(ExtendedStudentDto studentDto, OgnpCourseDto? oldCourse)
     {
         _coreService.UnscheduleStudent(studentDto, oldCourse);
     }
 
-    public List<IStudyStreamDto> FindStreamsByCourse(CourseNumber courseNumber)
+    public List<StudyStreamDto> FindStreamsByCourse(CourseNumber courseNumber)
     {
         return _coreService.FindStreamsByCourse(courseNumber);
     }
 
-    public List<IExtendedStudentDto> FindStudentsAtCourse(IOgnpCourseDto courseDto)
+    public List<ExtendedStudentDto> FindStudentsAtCourse(OgnpCourseDto courseDto)
     {
         return _coreService.FindStudentsAtCourse(courseDto);
     }
 
-    public List<IExtendedStudentDto> FindStudentsAtStream(GroupName streamName)
+    public List<ExtendedStudentDto> FindStudentsAtStream(GroupName streamName)
     {
         return _coreService.FindStudentsAtStream(streamName);
     }

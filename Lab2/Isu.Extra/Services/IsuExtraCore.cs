@@ -17,57 +17,59 @@ public class IsuExtraCore
 
     private IdGenerator _idGenerator = new ();
     private AudienceNumberGenerator _audienceNumberGenerator = new ();
-    private List<OgnpCourseDto> _courses = new ();
-    private List<TeacherDto> _teachers = new ();
-    private List<ExtendedGroupDto> _groups = new ();
-    private List<AudienceDto> _audiences = new ();
+    private List<OgnpCourse> _courses = new ();
+    private List<Teacher> _teachers = new ();
+    private List<ExtendedGroup> _groups = new ();
+    private List<Audience> _audiences = new ();
+    private List<ExtendedStudent> _students = new ();
 
-    public IReadOnlyCollection<OgnpCourseDto> Courses => _courses.AsReadOnly();
-    public IReadOnlyCollection<TeacherDto> Teachers => _teachers.AsReadOnly();
-    public IReadOnlyCollection<ExtendedGroupDto> Groups => _groups.AsReadOnly();
-    public IReadOnlyCollection<AudienceDto> Audiences => _audiences.AsReadOnly();
+    public IReadOnlyCollection<OgnpCourse> Courses => _courses.AsReadOnly();
+    public IReadOnlyCollection<Teacher> Teachers => _teachers.AsReadOnly();
+    public IReadOnlyCollection<ExtendedGroup> Groups => _groups.AsReadOnly();
+    public IReadOnlyCollection<Audience> Audiences => _audiences.AsReadOnly();
 
-    public IExtendedGroupDto AddGroup(GroupName groupName, int capacity)
+    public ExtendedGroupDto AddGroup(GroupName groupName, int capacity)
     {
-        ExtendedGroupDto groupDto = new ExtendedGroupDto(groupName, capacity);
-        _groups.Add(groupDto);
-        return groupDto;
+        ExtendedGroup group = new ExtendedGroup(groupName, capacity);
+        _groups.Add(group);
+        return new ExtendedGroupDto(group);
     }
 
-    public IExtendedStudentDto AddStudent(IExtendedGroupDto groupDto, string name)
+    public ExtendedStudentDto AddStudent(ExtendedGroupDto groupDto, string name)
     {
-        ExtendedGroupDto extendedGroupDto = GetGroup(groupDto);
-        ExtendedStudentDto studentDto = new ExtendedStudentDto(name, extendedGroupDto, _idGenerator.Id);
-        extendedGroupDto.AddStudent(studentDto);
+        ExtendedGroup extendedGroup = GetGroup(groupDto.ToExtendedGroup());
+        ExtendedStudent student = new ExtendedStudent(name, extendedGroup, _idGenerator.Id);
+        extendedGroup.AddStudent(student);
+        _students.Add(student);
         _idGenerator.Update();
-        return studentDto;
+        return new ExtendedStudentDto(student);
     }
 
-    public ITeacherDto AddTeacher(string name, FacultyId facultyId)
+    public TeacherDto AddTeacher(string name, FacultyId facultyId)
     {
-        TeacherDto teacherDto = new TeacherDto(name, facultyId);
-        _teachers.Add(teacherDto);
-        return teacherDto;
+        Teacher teacher = new Teacher(name, facultyId);
+        _teachers.Add(teacher);
+        return new TeacherDto(teacher);
     }
 
     public AudienceDto AddAudience()
     {
-        AudienceDto audienceDto = new AudienceDto(new Audience(_audienceNumberGenerator.Number));
+        Audience audience = new Audience(_audienceNumberGenerator.Number);
         _audienceNumberGenerator.Update();
-        _audiences.Add(audienceDto);
-        return audienceDto;
+        _audiences.Add(audience);
+        return new AudienceDto(audience);
     }
 
-    public IStudyStreamDto AddStream(GroupName streamName, int streamCapacity)
+    public StudyStreamDto AddStream(GroupName streamName, int streamCapacity)
     {
-        StudyStreamDto streamDto = new StudyStreamDto(streamName, streamCapacity);
-        return streamDto;
+        StudyStream stream = new StudyStream(streamName, streamCapacity);
+        return new StudyStreamDto(stream);
     }
 
     public void ConstructCourse(
         FacultyId facultyId,
-        ITeacherDto? teacher = null,
-        IStudyStreamDto? stream = null)
+        TeacherDto? teacher = null,
+        StudyStreamDto? stream = null)
     {
         if (teacher is not null && !teacher.FacultyId.Equals(facultyId))
             throw IsuExtraCoreException.WrongFacultyId();
@@ -82,23 +84,23 @@ public class IsuExtraCore
             _ognpCourseBuilder.AddStream(stream.ToStream());
     }
 
-    public IOgnpCourseDto AppendConstructedCourse()
+    public OgnpCourseDto AppendConstructedCourse()
     {
-        OgnpCourseDto courseDto = _ognpCourseBuilder.Build();
-        _courses.Add(courseDto);
-        return courseDto;
+        OgnpCourse course = _ognpCourseBuilder.Build();
+        _courses.Add(course);
+        return new OgnpCourseDto(course);
     }
 
     public void ConstructLesson(
-        ITeacherDto? teacher = null,
-        IAudienceDto? audience = null,
-        IStudyStreamDto? associatedStream = null,
-        IExtendedGroupDto? associatedGroup = null)
+        TeacherDto? teacher = null,
+        AudienceDto? audience = null,
+        StudyStreamDto? associatedStream = null,
+        ExtendedGroupDto? associatedGroup = null)
     {
-        TeacherDto? rwTeacher = FindTeacher(teacher) ?? null;
-        AudienceDto? rwAudience = FindAudience(audience);
-        StudyStreamDto? rwStream = associatedStream?.ToStream();
-        ExtendedGroupDto? rwGroup = FindGroup(associatedGroup);
+        Teacher? rwTeacher = FindTeacher(teacher) ?? null;
+        Audience? rwAudience = FindAudience(audience);
+        StudyStream? rwStream = associatedStream?.ToStream();
+        ExtendedGroup? rwGroup = FindGroup(associatedGroup);
 
         if (rwTeacher is not null)
             _lessonBuilder.Teacher(rwTeacher);
@@ -110,7 +112,7 @@ public class IsuExtraCore
             _lessonBuilder.AssociatedGroup(rwGroup);
     }
 
-    public LessonDto ScheduleLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+    public Lesson ScheduleLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _lessonBuilder
             .WeekDay(dayOfWeek)
@@ -119,127 +121,140 @@ public class IsuExtraCore
             .Build();
     }
 
-    public void ScheduleGroup(Group group, IAudienceDto audienceDto, ILessonDto lessonDto)
+    public void ScheduleGroup(Group group, AudienceDto audienceDto, LessonDto lessonDto)
     {
         ValidateLesson(audienceDto, lessonDto);
 
-        ExtendedGroupDto rwGroupDto = GetGroup(group);
-        LessonDto rwLessonDto = lessonDto.ToLesson();
-        AudienceDto rwAudienceDto = GetAudience(audienceDto);
+        ExtendedGroup rwGroup = GetGroup(group);
+        Lesson rwLesson = lessonDto.ToLesson();
+        Audience rwAudience = GetAudience(audienceDto);
 
-        rwGroupDto.AddLesson(lessonDto);
-        GetTeacher(rwLessonDto.TeacherDto).AddLesson(rwLessonDto);
-        rwAudienceDto.AddLesson(rwLessonDto);
+        rwGroup.AddLesson(lessonDto);
+        GetTeacher(new TeacherDto(lessonDto.Teacher)).AddLesson(rwLesson);
+        rwAudience.AddLesson(rwLesson);
     }
 
     public void ScheduleCourse(
-        IOgnpCourseDto courseDto,
-        IAudienceDto audienceDto,
-        ILessonDto lessonDto)
+        OgnpCourseDto courseDto,
+        AudienceDto audienceDto,
+        LessonDto lessonDto)
     {
         ValidateLesson(audienceDto, lessonDto);
 
-        OgnpCourseDto? rwCourse = _courses.Find(needleCourse => needleCourse.Equals(courseDto));
-        LessonDto rwLessonDto = lessonDto.ToLesson();
+        OgnpCourse? rwCourse = _courses.Find(needleCourse => needleCourse.Equals(courseDto.ToOgnpCourse()));
+        Lesson rwLesson = lessonDto.ToLesson();
 
         if (lessonDto.AssociatedStream is null)
             throw IsuExtraCoreException.StreamIsNotSet();
         if (rwCourse is null)
             throw IsuExtraCoreException.CourseNotFound();
-        rwCourse.AddLesson(lessonDto.AssociatedStream, rwLessonDto);
-        lessonDto.TeacherDto.AddLesson(rwLessonDto);
+        rwCourse.AddLesson(lessonDto.AssociatedStream, rwLesson);
+        lessonDto.Teacher.AddLesson(rwLesson);
     }
 
-    public void ScheduleStudent(IExtendedStudentDto studentDto, GroupName streamName, IOgnpCourseDto courseDto)
+    public void ScheduleStudent(ExtendedStudentDto studentDto, GroupName streamName, OgnpCourseDto courseDto)
     {
         ValidateStudent(studentDto);
-        ExtendedStudentDto rwStudentDto = (ExtendedStudentDto)studentDto;
-        OgnpCourseDto? rwCourse = _courses.Find(needleCourse => needleCourse.Equals(courseDto));
+        ExtendedStudent rwStudent = GetStudent(studentDto);
+        OgnpCourse? rwCourse = _courses.Find(needleCourse => needleCourse.Equals(courseDto.ToOgnpCourse()));
         if (rwCourse is null)
             throw IsuExtraCoreException.CourseNotFound();
         rwCourse.AddStudent(streamName, studentDto);
-        rwStudentDto.AddOgnpCourse(courseDto);
+        rwStudent.AddOgnpCourse(courseDto);
     }
 
-    public void UnscheduleStudent(IExtendedStudentDto studentDto, IOgnpCourseDto? oldCourse)
+    public void UnscheduleStudent(ExtendedStudentDto studentDto, OgnpCourseDto? oldCourse)
     {
-        ExtendedStudentDto rwStudentDto = (ExtendedStudentDto)studentDto;
-        OgnpCourseDto? rwCourse = _courses.Find(needleCourse => needleCourse.Equals(oldCourse));
+        ExtendedStudent rwStudent = GetStudent(studentDto);
+        OgnpCourse? rwCourse = _courses.Find(needleCourse => needleCourse.Equals(oldCourse?.ToOgnpCourse()));
         if (rwCourse is null)
             throw IsuExtraCoreException.CourseNotFound();
-        rwCourse?.RemoveStudent(studentDto);
-        rwStudentDto.ChangeOgnpCourse(oldCourse, null);
+        rwCourse.RemoveStudent(rwStudent);
+        rwStudent.ChangeOgnpCourse(oldCourse, null);
     }
 
-    public List<IStudyStreamDto> FindStreamsByCourse(CourseNumber courseNumber)
+    public List<StudyStreamDto> FindStreamsByCourse(CourseNumber courseNumber)
     {
         return _courses
             .SelectMany(course => course.Streams)
-            .Where(stream => stream.GroupDto.GroupName.Course.Value == courseNumber.Value)
+            .Where(stream => stream.Group.GroupName.Course.Value == courseNumber.Value)
             .ToList();
     }
 
-    public List<IExtendedStudentDto> FindStudentsAtCourse(IOgnpCourseDto courseDto)
+    public List<ExtendedStudentDto> FindStudentsAtCourse(OgnpCourseDto courseDto)
     {
         return _courses
-            .First(needleCourse => needleCourse.Equals(courseDto)).Streams
-            .SelectMany(stream => stream.GroupDto.Students)
+            .First(needleCourse => needleCourse.Equals(courseDto.ToOgnpCourse())).Streams
+            .SelectMany(stream => stream.Group.Students)
+            .Select(student => new ExtendedStudentDto(student))
             .ToList();
     }
 
-    public List<IExtendedStudentDto> FindStudentsAtStream(GroupName streamName)
+    public List<ExtendedStudentDto> FindStudentsAtStream(GroupName streamName)
     {
         return _courses
             .SelectMany(course => course.Streams)
-            .Where(stream => stream.GroupDto.GroupName.Name == streamName.Name)
-            .SelectMany(stream => stream.GroupDto.Students).ToList();
+            .Where(stream => stream.Group.GroupName.Name == streamName.Name)
+            .SelectMany(stream => stream.Group.Students)
+            .Select(student => new ExtendedStudentDto(student))
+            .ToList();
     }
 
-    private void ValidateLesson(IAudienceDto audienceDto, ILessonDto lessonDto)
+    private void ValidateLesson(AudienceDto audienceDto, LessonDto lessonDto)
     {
-        if (audienceDto.ScheduleDto.TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
-            lessonDto.TeacherDto.ScheduleDto.TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
+        if (audienceDto.ScheduleDto.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
+            lessonDto.Teacher.Schedule.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
 
             (lessonDto.AssociatedGroup is not null &&
-             lessonDto.AssociatedGroup.ScheduleDto.TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime)) ||
+             lessonDto.AssociatedGroup.ScheduleDto.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime)) ||
 
             (lessonDto.AssociatedStream is not null &&
-             lessonDto.AssociatedStream.ScheduleDto.TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime)))
+             lessonDto.AssociatedStream.Schedule.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime)))
             throw SchedulerException.TimeIsAlreadyScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime);
     }
 
-    private void ValidateStudent(IExtendedStudentDto studentDto)
+    private void ValidateStudent(ExtendedStudentDto studentDto)
     {
         if (studentDto.OgnpCourses.All(course => course is not null))
             throw IsuExtraCoreException.StudentHasAllOgnp();
     }
 
-    private TeacherDto? FindTeacher(ITeacherDto? teacher)
+    private Teacher? FindTeacher(TeacherDto? teacher)
     {
-        return _teachers.Find(needleTeacher => needleTeacher.Equals(teacher));
+        return _teachers.Find(needleTeacher => needleTeacher.Equals(teacher?.ToTeacher()));
     }
 
-    private ExtendedGroupDto? FindGroup(object? group)
+    private ExtendedGroup? FindGroup(object? group)
     {
         return _groups.Find(needleGroup => needleGroup.Equals(group));
     }
 
-    private AudienceDto? FindAudience(IAudienceDto? audience)
+    private Audience? FindAudience(AudienceDto? audience)
     {
-        return _audiences.Find(needleAudience => needleAudience.Equals(audience));
+        return _audiences.Find(needleAudience => needleAudience.Equals(audience?.ToAudience()));
     }
 
-    private AudienceDto GetAudience(IAudienceDto? audience)
+    private Audience GetAudience(AudienceDto? audience)
     {
         return FindAudience(audience) ?? throw IsuExtraCoreException.AudienceNotFound();
     }
 
-    private ExtendedGroupDto GetGroup(object group)
+    private ExtendedStudent? FindStudent(ExtendedStudentDto? studentDto)
+    {
+        return _students.Find(needleStudent => needleStudent.Equals(studentDto?.ToExtendedStudent()));
+    }
+
+    private ExtendedStudent GetStudent(ExtendedStudentDto? studentDto)
+    {
+        return FindStudent(studentDto) ?? throw IsuExtraCoreException.AudienceNotFound();
+    }
+
+    private ExtendedGroup GetGroup(object group)
     {
         return FindGroup(group) ?? throw IsuExtraCoreException.GroupNotFound(group);
     }
 
-    private TeacherDto GetTeacher(ITeacherDto teacherDto)
+    private Teacher GetTeacher(TeacherDto teacherDto)
     {
         return FindTeacher(teacherDto) ?? throw IsuExtraCoreException.TeacherNotFound(teacherDto);
     }

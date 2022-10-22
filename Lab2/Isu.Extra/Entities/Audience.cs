@@ -7,7 +7,7 @@ namespace Isu.Extra.Models;
 
 public class Audience : IScheduler, IEquatable<Audience>
 {
-    private ScheduleDto _scheduleDto;
+    private Schedule _schedule;
     private int _number;
 
     public Audience(int number)
@@ -15,38 +15,38 @@ public class Audience : IScheduler, IEquatable<Audience>
         if (number < 0)
             throw SchedulerException.WrongAudienceNumber(number);
         _number = number;
-        _scheduleDto = new ScheduleDto();
+        _schedule = new Schedule();
     }
 
     public Audience(AudienceDto copiedAudience)
     {
-        _scheduleDto = new ScheduleDto(copiedAudience.ScheduleDto);
+        _schedule = new Schedule(copiedAudience.ScheduleDto);
         _number = copiedAudience.Number;
     }
 
-    public IScheduleDto ScheduleDto => _scheduleDto;
+    public ScheduleDto Schedule => new ScheduleDto(_schedule);
     public int Number => _number;
 
-    public void AddLesson(LessonDto lessonDto)
+    public void AddLesson(Lesson lesson)
     {
-        _scheduleDto.AddLesson(lessonDto);
+        _schedule.AddLesson(lesson);
     }
 
-    public void RemoveLesson(LessonDto lessonDto)
+    public void RemoveLesson(Lesson lesson)
     {
-        _scheduleDto.RemoveLesson(lessonDto);
+        _schedule.RemoveLesson(lesson);
     }
 
-    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
-        return _scheduleDto.FindLesson(dayOfWeek, startTime, endTime);
+        return _schedule.FindLesson(dayOfWeek, startTime, endTime);
     }
 
     public bool Equals(Audience? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _scheduleDto.Equals(other._scheduleDto) && _number == other._number;
+        return _number == other._number;
     }
 
     public override bool Equals(object? obj)
@@ -59,6 +59,6 @@ public class Audience : IScheduler, IEquatable<Audience>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_scheduleDto, _number);
+        return HashCode.Combine(_schedule, _number);
     }
 }

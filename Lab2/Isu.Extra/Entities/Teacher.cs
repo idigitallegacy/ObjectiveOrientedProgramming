@@ -5,11 +5,11 @@ using Isu.Extra.Wrappers;
 
 namespace Isu.Extra.Entities;
 
-public class TeacherDto : IScheduler, ITeacherDto, IEquatable<TeacherDto>
+public class Teacher : IScheduler, IEquatable<Teacher>
 {
-    private ScheduleDto _scheduleDto = new ();
+    private Schedule _schedule = new ();
 
-    public TeacherDto(string name, FacultyId facultyId)
+    public Teacher(string name, FacultyId facultyId)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new TeacherException("Wrong teacher name");
@@ -17,7 +17,7 @@ public class TeacherDto : IScheduler, ITeacherDto, IEquatable<TeacherDto>
         FacultyId = facultyId;
     }
 
-    public TeacherDto(ITeacherDto copiedTeacherDto)
+    public Teacher(TeacherDto copiedTeacherDto)
     {
         Name = copiedTeacherDto.Name;
         FacultyId = new FacultyId(copiedTeacherDto.FacultyId);
@@ -25,28 +25,28 @@ public class TeacherDto : IScheduler, ITeacherDto, IEquatable<TeacherDto>
 
     public string Name { get; }
     public FacultyId FacultyId { get; }
-    public IScheduleDto ScheduleDto => _scheduleDto;
+    public ScheduleDto Schedule => new ScheduleDto(_schedule);
 
-    public void AddLesson(LessonDto lessonDto)
+    public void AddLesson(Lesson lesson)
     {
-        _scheduleDto.AddLesson(lessonDto);
+        _schedule.AddLesson(lesson);
     }
 
-    public void RemoveLesson(LessonDto lessonDto)
+    public void RemoveLesson(Lesson lesson)
     {
-        _scheduleDto.RemoveLesson(lessonDto);
+        _schedule.RemoveLesson(lesson);
     }
 
-    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
-        return _scheduleDto.FindLesson(dayOfWeek, startTime, endTime);
+        return _schedule.FindLesson(dayOfWeek, startTime, endTime);
     }
 
-    public bool Equals(TeacherDto? other)
+    public bool Equals(Teacher? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _scheduleDto.Equals(other._scheduleDto) && Name == other.Name && FacultyId.Equals(other.FacultyId);
+        return Name == other.Name && FacultyId.Equals(other.FacultyId);
     }
 
     public override bool Equals(object? obj)
@@ -54,11 +54,11 @@ public class TeacherDto : IScheduler, ITeacherDto, IEquatable<TeacherDto>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((TeacherDto)obj);
+        return Equals((Teacher)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_scheduleDto, Name, FacultyId);
+        return HashCode.Combine(_schedule, Name, FacultyId);
     }
 }

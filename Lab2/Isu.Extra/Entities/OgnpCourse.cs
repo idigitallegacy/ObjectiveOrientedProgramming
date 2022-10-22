@@ -9,70 +9,75 @@ using Isu.Models;
 
 namespace Isu.Extra.Entities;
 
-public class OgnpCourseDto : IOgnpCourseDto, IEquatable<OgnpCourseDto>
+public class OgnpCourse : IEquatable<OgnpCourse>
 {
-    private List<StudyStreamDto> _streams;
-    private List<TeacherDto> _teachers;
+    private List<StudyStream> _streams;
+    private List<Teacher> _teachers;
     private FacultyId _facultyId;
 
-    public OgnpCourseDto(FacultyId facultyId, List<TeacherDto> teachers, List<StudyStreamDto> streams)
+    public OgnpCourse(FacultyId facultyId, List<Teacher> teachers, List<StudyStream> streams)
     {
         if (teachers.Count == 0)
             throw OgnpCourseException.TooFewTeachers();
         if (streams.Count == 0)
             throw OgnpCourseException.TooFewStreams();
-        _streams = new List<StudyStreamDto>(streams);
-        _teachers = new List<TeacherDto>(teachers);
+        _streams = new List<StudyStream>(streams);
+        _teachers = new List<Teacher>(teachers);
         _facultyId = facultyId;
     }
 
-    public OgnpCourseDto(IOgnpCourseDto copiedCourseDto)
+    public OgnpCourse(OgnpCourseDto copiedCourseDto)
     {
-        _streams = new List<StudyStreamDto>(copiedCourseDto.Streams.Select(roStream => roStream.ToStream()));
-        _teachers = new List<TeacherDto>(copiedCourseDto.Teachers.Select(roTeacher => roTeacher.ToTeacher()));
+        _streams = new List<StudyStream>(copiedCourseDto.Streams.Select(roStream => roStream.ToStream()));
+        _teachers = new List<Teacher>(copiedCourseDto.Teachers.Select(roTeacher => roTeacher.ToTeacher()));
         _facultyId = new FacultyId(copiedCourseDto.FacultyId);
     }
 
-    public IReadOnlyCollection<IStudyStreamDto> Streams => _streams.AsReadOnly();
-    public IReadOnlyCollection<ITeacherDto> Teachers => _teachers.AsReadOnly();
+    public IEnumerable<StudyStreamDto> Streams => _streams.Select(stream => new StudyStreamDto(stream));
+    public IEnumerable<TeacherDto> Teachers => _teachers.Select(teacher => new TeacherDto(teacher));
     public FacultyId FacultyId => _facultyId;
 
-    public void AddStudent(GroupName streamName, IExtendedStudentDto studentDto)
+    public void AddStudent(GroupName streamName, ExtendedStudentDto studentDto)
     {
         GetStream(streamName).AddStudent(studentDto);
     }
 
-    public void RemoveStudent(IExtendedStudentDto studentDto)
+    public void RemoveStudent(ExtendedStudent student)
     {
+        var st = _streams
+            .First(stream => stream.Group.Students.Contains(student));
         _streams
-            .First(stream => stream.GroupDto.Students.Contains(studentDto))
-            .RemoveStudent(studentDto);
+            .First(stream => stream.Group.Students.Contains(student))
+            .RemoveStudent(student);
     }
 
-    public ITeacherDto? FindTeacher(string name)
+    public TeacherDto? FindTeacher(string name)
     {
-        return _teachers.FirstOrDefault(teacher => teacher.Name == name);
+        Teacher? needle = _teachers.FirstOrDefault(teacher => teacher.Name == name);
+        if (needle is null)
+            return null;
+        return new TeacherDto(needle);
     }
 
-    public void AddLesson(StudyStreamDto streamDto, LessonDto lessonDto)
+    public void AddLesson(StudyStream stream, Lesson lesson)
     {
-        ValidateStreamLesson(streamDto, lessonDto);
-        StudyStreamDto? rwStream = _streams.Find(needleStream => needleStream.Equals(streamDto));
+        ValidateStreamLesson(stream, lesson);
+        StudyStream? rwStream = _streams.Find(needleStream => needleStream.Equals(stream));
         if (rwStream is null)
-            throw OgnpCourseException.StreamNotFound(streamDto.GroupDto.GroupName);
-        rwStream.AddLesson(lessonDto);
+            throw OgnpCourseException.StreamNotFound(stream.Group.GroupName);
+        rwStream.AddLesson(lesson);
     }
 
-    public void RemoveLesson(StudyStreamDto streamDto, LessonDto lessonDto)
+    public void RemoveLesson(StudyStream stream, Lesson lesson)
     {
-        streamDto.RemoveLesson(lessonDto);
+        stream.RemoveLesson(lesson);
     }
 
-    public bool Equals(OgnpCourseDto? other)
+    public bool Equals(OgnpCourse? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _streams.Equals(other._streams) && _teachers.Equals(other._teachers) && _facultyId.Equals(other._facultyId);
+        return _streams.All(stream => other._streams.All(otherStream => otherStream.Equals(stream)));
     }
 
     public override bool Equals(object? obj)
@@ -80,23 +85,23 @@ public class OgnpCourseDto : IOgnpCourseDto, IEquatable<OgnpCourseDto>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((OgnpCourseDto)obj);
+        return Equals((OgnpCourse)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_streams, _teachers, _facultyId);
+        return HashCode.Combine(_streams);
     }
 
-    private StudyStreamDto GetStream(GroupName streamName)
+    private StudyStream GetStream(GroupName streamName)
     {
-        return _streams.FirstOrDefault(stream => stream.GroupDto.GroupName.Name == streamName.Name) ??
+        return _streams.FirstOrDefault(stream => stream.Group.GroupName.Name == streamName.Name) ??
                throw OgnpCourseException.StreamNotFound(streamName);
     }
 
-    private void ValidateStreamLesson(StudyStreamDto streamDto, LessonDto lessonDto)
+    private void ValidateStreamLesson(StudyStream stream, Lesson lesson)
     {
-        if (streamDto.ScheduleDto.TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime))
-            throw SchedulerException.TimeIsAlreadyScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime);
+        if (stream.Schedule.ToSchedule().TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime))
+            throw SchedulerException.TimeIsAlreadyScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
     }
 }

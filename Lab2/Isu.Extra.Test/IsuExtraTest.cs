@@ -25,16 +25,16 @@ public class IsuExtraTest
         TimeSpan lessonEndTime = new TimeSpan(11, 30, 0);
 
         GroupName groupName = new GroupName(groupNameString);
-        IAudienceDto audienceDto = service.AddAudience();
-        IStudyStreamDto streamDto = service.AddStream(groupName, groupCapacity);
-        ITeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
-        IOgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
-        ILessonDto lessonDto =
+        AudienceDto audienceDto = service.AddAudience();
+        StudyStreamDto streamDto = service.AddStream(groupName, groupCapacity);
+        TeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
+        OgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
+        LessonDto lessonDto =
             service.AddLesson(DayOfWeek.Monday, lessonStartTime, lessonEndTime, teacherDto, audienceDto, streamDto);
         service.ScheduleCourse(courseDto, audienceDto, lessonDto);
 
-        Assert.Equal(streamDto, courseDto.Streams.First(needleStream => needleStream.Equals(streamDto)));
-        Assert.Equal(courseDto, service.Courses.First());
+        Assert.Equal(streamDto.ToStream(), courseDto.Streams.First().ToStream());
+        Assert.Equal(courseDto.ToOgnpCourse(), new OgnpCourseDto(service.Courses.First()).ToOgnpCourse());
     }
 
     [Fact]
@@ -54,17 +54,17 @@ public class IsuExtraTest
 
         GroupName groupName = new GroupName(groupNameString);
         GroupName streamName = new GroupName(streamNameString);
-        IAudienceDto audienceDto = service.AddAudience();
-        IStudyStreamDto streamDto = service.AddStream(streamName, groupCapacity);
-        ITeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
-        IOgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
-        IExtendedGroupDto groupDto = service.AddGroup(groupName, groupCapacity);
+        AudienceDto audienceDto = service.AddAudience();
+        StudyStreamDto streamDto = service.AddStream(streamName, groupCapacity);
+        TeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
+        OgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
+        ExtendedGroupDto groupDto = service.AddGroup(groupName, groupCapacity);
 
-        IExtendedStudentDto studentDto = service.AddStudent(groupDto, "Michael");
+        ExtendedStudentDto studentDto = service.AddStudent(groupDto, "Michael");
         service.ScheduleStudent(studentDto, streamName, courseDto);
 
-        Assert.Equal(courseDto, studentDto.OgnpCourses.First());
-        Assert.Equal(studentDto, service.Courses.First().Streams.First().GroupDto.Students.First());
+        Assert.Equal(courseDto.ToOgnpCourse(), studentDto.OgnpCourses.First()?.ToOgnpCourse());
+        Assert.Equal(studentDto.ToExtendedStudent(), service.Courses.First().Streams.First().Group.Students.First());
     }
 
     [Fact]
@@ -84,18 +84,18 @@ public class IsuExtraTest
 
         GroupName groupName = new GroupName(groupNameString);
         GroupName streamName = new GroupName(streamNameString);
-        IAudienceDto audienceDto = service.AddAudience();
-        IStudyStreamDto streamDto = service.AddStream(streamName, groupCapacity);
-        ITeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
-        IOgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
-        IExtendedGroupDto groupDto = service.AddGroup(groupName, groupCapacity);
+        AudienceDto audienceDto = service.AddAudience();
+        StudyStreamDto streamDto = service.AddStream(streamName, groupCapacity);
+        TeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
+        OgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
+        ExtendedGroupDto groupDto = service.AddGroup(groupName, groupCapacity);
 
-        IExtendedStudentDto studentDto = service.AddStudent(groupDto, "Michael");
+        ExtendedStudentDto studentDto = service.AddStudent(groupDto, "Michael");
         service.ScheduleStudent(studentDto, streamName, courseDto);
         service.UnscheduleStudent(studentDto, courseDto);
 
         Assert.True(studentDto.OgnpCourses.First() is null);
-        Assert.Equal(0, service.Courses.First().Streams.First().GroupDto.Students.Count);
+        Assert.Equal(0, service.Courses.First().Streams.First().Group.Students.Count);
     }
 
     [Fact]
@@ -115,14 +115,14 @@ public class IsuExtraTest
 
         GroupName groupName = new GroupName(groupNameString);
         GroupName streamName = new GroupName(streamNameString);
-        IAudienceDto audienceDto = service.AddAudience();
-        IStudyStreamDto streamDto = service.AddStream(streamName, groupCapacity);
-        ITeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
-        IOgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
-        IExtendedGroupDto groupDto = service.AddGroup(groupName, groupCapacity);
+        AudienceDto audienceDto = service.AddAudience();
+        StudyStreamDto streamDto = service.AddStream(streamName, groupCapacity);
+        TeacherDto teacherDto = service.AddTeacher(teacherNameSting, facultyId);
+        OgnpCourseDto courseDto = service.AddCourse(facultyId, teacherDto, streamDto);
+        ExtendedGroupDto groupDto = service.AddGroup(groupName, groupCapacity);
 
-        IExtendedStudentDto studentDto = service.AddStudent(groupDto, "Michael");
-        List<IExtendedStudentDto> students = new List<IExtendedStudentDto> { studentDto };
+        ExtendedStudentDto studentDto = service.AddStudent(groupDto, "Michael");
+        List<ExtendedStudentDto> students = new List<ExtendedStudentDto> { studentDto };
         service.ScheduleStudent(studentDto, streamName, courseDto);
 
         Assert.Equal(students, service.FindStudentsAtStream(streamName));

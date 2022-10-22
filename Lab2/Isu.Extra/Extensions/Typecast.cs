@@ -13,38 +13,38 @@ public static class Typecast
         return new Audience(audienceDto);
     }
 
-    public static ExtendedGroupDto ToExtendedGroup(this IExtendedGroupDto groupDto)
+    public static ExtendedGroup ToExtendedGroup(this ExtendedGroupDto groupDto)
     {
-        return new ExtendedGroupDto(groupDto);
+        return new ExtendedGroup(groupDto);
     }
 
-    public static ExtendedStudentDto ToExtendedStudent(this IExtendedStudentDto studentDto)
+    public static ExtendedStudent ToExtendedStudent(this ExtendedStudentDto studentDto)
     {
-        return new ExtendedStudentDto(studentDto);
+        return new ExtendedStudent(studentDto);
     }
 
-    public static LessonDto ToLesson(this ILessonDto lessonDto)
+    public static Lesson ToLesson(this LessonDto lessonDto)
     {
-        return new LessonDto(lessonDto);
+        return new Lesson(lessonDto);
     }
 
-    public static OgnpCourseDto ToOgnpCourse(this IOgnpCourseDto courseDto)
+    public static OgnpCourse ToOgnpCourse(this OgnpCourseDto courseDto)
     {
-        return new OgnpCourseDto(courseDto);
+        return new OgnpCourse(courseDto);
     }
 
-    public static ScheduleDto ToSchedule(this IScheduleDto scheduleDto)
+    public static Schedule ToSchedule(this ScheduleDto scheduleDto)
     {
-        return new ScheduleDto(scheduleDto);
+        return new Schedule(scheduleDto);
     }
 
-    public static StudyStreamDto ToStream(this IStudyStreamDto streamDto)
+    public static StudyStream ToStream(this StudyStreamDto streamDto)
     {
-        return new StudyStreamDto(streamDto);
+        return new StudyStream(streamDto);
     }
 
-    public static TeacherDto ToTeacher(this ITeacherDto teacherDto)
+    public static Teacher ToTeacher(this TeacherDto teacherDto)
     {
-        return new TeacherDto(teacherDto);
+        return new Teacher(teacherDto);
     }
 }

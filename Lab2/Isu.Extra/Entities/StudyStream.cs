@@ -8,58 +8,58 @@ using Isu.Models;
 
 namespace Isu.Extra.Entities;
 
-public class StudyStreamDto : IScheduler, IStudyStreamDto, IEquatable<StudyStreamDto>
+public class StudyStream : IScheduler, IEquatable<StudyStream>
 {
-    private ScheduleDto _scheduleDto;
-    private ExtendedGroupDto _groupDto;
+    private Schedule _schedule;
+    private ExtendedGroup _group;
 
-    public StudyStreamDto(GroupName streamName, int streamCapacity)
+    public StudyStream(GroupName streamName, int streamCapacity)
     {
-        _scheduleDto = new ScheduleDto();
-        _groupDto = new ExtendedGroupDto(streamName, streamCapacity);
+        _schedule = new Schedule();
+        _group = new ExtendedGroup(streamName, streamCapacity);
     }
 
-    public StudyStreamDto(IStudyStreamDto copiedStreamDto)
+    public StudyStream(StudyStreamDto copiedStreamDto)
     {
-        _scheduleDto = new ScheduleDto(copiedStreamDto.ScheduleDto);
-        _groupDto = new ExtendedGroupDto(copiedStreamDto.GroupDto);
+        _schedule = new Schedule(copiedStreamDto.Schedule);
+        _group = new ExtendedGroup(new ExtendedGroupDto(copiedStreamDto.Group));
     }
 
-    public IScheduleDto ScheduleDto => _scheduleDto;
-    public ExtendedGroupDto GroupDto => _groupDto;
+    public ScheduleDto Schedule => new ScheduleDto(_schedule);
+    public ExtendedGroup Group => _group;
 
-    public void AddStudent(IExtendedStudentDto studentDto)
+    public void AddStudent(ExtendedStudentDto studentDto)
     {
         ValidateStudent(studentDto);
-        _groupDto.AddStudent(studentDto);
+        _group.AddStudent(studentDto);
     }
 
-    public void RemoveStudent(IExtendedStudentDto studentDto)
+    public void RemoveStudent(ExtendedStudent student)
     {
-        _groupDto.RemoveStudent(studentDto.ToExtendedStudent());
+        _group.RemoveStudent(student);
     }
 
-    public void AddLesson(LessonDto lessonDto)
+    public void AddLesson(Lesson lesson)
     {
-        _groupDto.AddLesson(lessonDto);
-        _scheduleDto.AddLesson(lessonDto);
+        _group.AddLesson(new LessonDto(lesson));
+        _schedule.AddLesson(lesson);
     }
 
-    public void RemoveLesson(LessonDto lessonDto)
+    public void RemoveLesson(Lesson lesson)
     {
-        _scheduleDto.RemoveLesson(lessonDto);
+        _schedule.RemoveLesson(lesson);
     }
 
-    public LessonDto? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+    public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
-        return _scheduleDto.FindLesson(dayOfWeek, startTime, endTime);
+        return _schedule.FindLesson(dayOfWeek, startTime, endTime);
     }
 
-    public bool Equals(StudyStreamDto? other)
+    public bool Equals(StudyStream? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _groupDto.GroupName == other._groupDto.GroupName;
+        return _group.GroupName.Equals(other._group.GroupName);
     }
 
     public override bool Equals(object? obj)
@@ -67,31 +67,32 @@ public class StudyStreamDto : IScheduler, IStudyStreamDto, IEquatable<StudyStrea
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((StudyStreamDto)obj);
+        return Equals((StudyStream)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_scheduleDto, _groupDto);
+        return HashCode.Combine(_schedule, _group);
     }
 
-    private void ValidateStudent(IExtendedStudentDto studentDto)
+    private void ValidateStudent(ExtendedStudentDto studentDto)
     {
         bool studentGroupTimeIsScheduled =
-            _scheduleDto.Lessons.Any(lesson =>
+            _schedule.Lessons.Any(lesson =>
             {
-                return studentDto.ExtendedGroupDto.ScheduleDto
+                return studentDto.ExtendedGroup.ScheduleDto.ToSchedule()
                     .TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime);
             });
         bool studentIsScheduledByOgnp =
             studentDto.OgnpCourses.Any(course =>
             {
                 bool? returnValue = course?.Streams
-                    .Where(stream => stream.GroupDto.Students.Contains(studentDto))
+                    .Where(stream => stream.Group.Students.Contains(studentDto.ToExtendedStudent()))
                     .Any(stream =>
                     {
-                        return _scheduleDto.Lessons.Any(lesson =>
-                            stream.ScheduleDto.TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime));
+                        return _schedule.Lessons.Any(lesson =>
+                            stream.Schedule.ToSchedule()
+                                .TimeIsScheduled(lesson.DayOfWeek, lesson.StartTime, lesson.EndTime));
                     });
                 return returnValue is not null && returnValue == true;
             });
