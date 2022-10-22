@@ -28,8 +28,9 @@ public class ExtendedStudentDto : Student, IExtendedStudentDto, IEquatable<Stude
     }
 
     public FacultyId FacultyId { get; }
+
     public IExtendedGroupDto ExtendedGroupDto => _groupDto;
-    public Group Group => _groupDto.ToExtendedGroup();
+    public new Group Group => _groupDto.ToExtendedGroup();
 
     public IReadOnlyCollection<IOgnpCourseDto?> OgnpCourses => _ognpCourses.AsReadOnly();
 
