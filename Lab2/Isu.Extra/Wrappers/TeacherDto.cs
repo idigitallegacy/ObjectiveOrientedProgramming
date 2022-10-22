@@ -17,4 +17,9 @@ public class TeacherDto
     public FacultyId FacultyId { get; }
 
     public ScheduleDto Schedule { get; }
+
+    public Teacher ToTeacher()
+    {
+        return new Teacher(this);
+    }
 }

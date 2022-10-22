@@ -28,7 +28,7 @@ public class ExtendedGroup : Group, IEquatable<Group>
         Capacity = copiedGroupDto.Capacity;
     }
 
-    public ScheduleDto ScheduleDto => new ScheduleDto(_schedule);
+    public ScheduleDto ScheduleDto => _schedule.AsDto();
     public new IReadOnlyCollection<ExtendedStudent> Students => _students.AsReadOnly();
     public FacultyId FacultyId { get; }
 
@@ -49,6 +49,11 @@ public class ExtendedGroup : Group, IEquatable<Group>
     public void AddLesson(LessonDto lessonDto)
     {
         _schedule.AddLesson(lessonDto.ToLesson());
+    }
+
+    public ExtendedGroupDto AsDto()
+    {
+        return new ExtendedGroupDto(this);
     }
 
     public bool Equals(Group? other)

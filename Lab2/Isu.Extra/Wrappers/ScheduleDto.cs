@@ -12,4 +12,9 @@ public class ScheduleDto
     }
 
     public IReadOnlyCollection<Lesson> Lessons { get; }
+
+    public Schedule ToSchedule()
+    {
+        return new Schedule(this);
+    }
 }

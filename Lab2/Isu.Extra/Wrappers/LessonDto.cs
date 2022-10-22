@@ -25,4 +25,9 @@ public class LessonDto
     public Teacher Teacher { get; }
     public StudyStream? AssociatedStream { get; }
     public ExtendedGroup? AssociatedGroup { get; }
+
+    public Lesson ToLesson()
+    {
+        return new Lesson(this);
+    }
 }

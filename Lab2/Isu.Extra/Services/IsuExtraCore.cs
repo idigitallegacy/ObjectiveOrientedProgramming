@@ -32,7 +32,7 @@ public class IsuExtraCore
     {
         ExtendedGroup group = new ExtendedGroup(groupName, capacity);
         _groups.Add(group);
-        return new ExtendedGroupDto(group);
+        return group.AsDto();
     }
 
     public ExtendedStudentDto AddStudent(ExtendedGroupDto groupDto, string name)
@@ -42,14 +42,14 @@ public class IsuExtraCore
         extendedGroup.AddStudent(student);
         _students.Add(student);
         _idGenerator.Update();
-        return new ExtendedStudentDto(student);
+        return student.AsDto();
     }
 
     public TeacherDto AddTeacher(string name, FacultyId facultyId)
     {
         Teacher teacher = new Teacher(name, facultyId);
         _teachers.Add(teacher);
-        return new TeacherDto(teacher);
+        return teacher.AsDto();
     }
 
     public AudienceDto AddAudience()
@@ -57,13 +57,13 @@ public class IsuExtraCore
         Audience audience = new Audience(_audienceNumberGenerator.Number);
         _audienceNumberGenerator.Update();
         _audiences.Add(audience);
-        return new AudienceDto(audience);
+        return audience.AsDto();
     }
 
     public StudyStreamDto AddStream(GroupName streamName, int streamCapacity)
     {
         StudyStream stream = new StudyStream(streamName, streamCapacity);
-        return new StudyStreamDto(stream);
+        return stream.AsDto();
     }
 
     public void ConstructCourse(
@@ -88,7 +88,7 @@ public class IsuExtraCore
     {
         OgnpCourse course = _ognpCourseBuilder.Build();
         _courses.Add(course);
-        return new OgnpCourseDto(course);
+        return course.AsDto();
     }
 
     public void ConstructLesson(
@@ -130,7 +130,7 @@ public class IsuExtraCore
         Audience rwAudience = GetAudience(audienceDto);
 
         rwGroup.AddLesson(lessonDto);
-        GetTeacher(new TeacherDto(lessonDto.Teacher)).AddLesson(rwLesson);
+        GetTeacher(lessonDto.Teacher.AsDto()).AddLesson(rwLesson);
         rwAudience.AddLesson(rwLesson);
     }
 
@@ -186,7 +186,7 @@ public class IsuExtraCore
         return _courses
             .First(needleCourse => needleCourse.Equals(courseDto.ToOgnpCourse())).Streams
             .SelectMany(stream => stream.Group.Students)
-            .Select(student => new ExtendedStudentDto(student))
+            .Select(student => student.AsDto())
             .ToList();
     }
 
@@ -196,13 +196,13 @@ public class IsuExtraCore
             .SelectMany(course => course.Streams)
             .Where(stream => stream.Group.GroupName.Name == streamName.Name)
             .SelectMany(stream => stream.Group.Students)
-            .Select(student => new ExtendedStudentDto(student))
+            .Select(student => student.AsDto())
             .ToList();
     }
 
     private void ValidateLesson(AudienceDto audienceDto, LessonDto lessonDto)
     {
-        if (audienceDto.ScheduleDto.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
+        if (audienceDto.Schedule.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
             lessonDto.Teacher.Schedule.ToSchedule().TimeIsScheduled(lessonDto.DayOfWeek, lessonDto.StartTime, lessonDto.EndTime) ||
 
             (lessonDto.AssociatedGroup is not null &&

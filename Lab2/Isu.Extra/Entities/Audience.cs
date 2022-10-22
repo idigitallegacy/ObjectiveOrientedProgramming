@@ -20,11 +20,11 @@ public class Audience : IScheduler, IEquatable<Audience>
 
     public Audience(AudienceDto copiedAudience)
     {
-        _schedule = new Schedule(copiedAudience.ScheduleDto);
+        _schedule = new Schedule(copiedAudience.Schedule);
         _number = copiedAudience.Number;
     }
 
-    public ScheduleDto Schedule => new ScheduleDto(_schedule);
+    public ScheduleDto Schedule => _schedule.AsDto();
     public int Number => _number;
 
     public void AddLesson(Lesson lesson)
@@ -40,6 +40,11 @@ public class Audience : IScheduler, IEquatable<Audience>
     public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
+    }
+
+    public AudienceDto AsDto()
+    {
+        return new AudienceDto(this);
     }
 
     public bool Equals(Audience? other)

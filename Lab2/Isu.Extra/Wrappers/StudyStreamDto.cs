@@ -14,4 +14,9 @@ public class StudyStreamDto
 
     public ScheduleDto Schedule { get; }
     public ExtendedGroup Group { get; }
+
+    public StudyStream ToStream()
+    {
+        return new StudyStream(this);
+    }
 }

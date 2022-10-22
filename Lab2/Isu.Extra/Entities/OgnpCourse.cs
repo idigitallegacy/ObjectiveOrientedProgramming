@@ -33,8 +33,8 @@ public class OgnpCourse : IEquatable<OgnpCourse>
         _facultyId = new FacultyId(copiedCourseDto.FacultyId);
     }
 
-    public IEnumerable<StudyStreamDto> Streams => _streams.Select(stream => new StudyStreamDto(stream));
-    public IEnumerable<TeacherDto> Teachers => _teachers.Select(teacher => new TeacherDto(teacher));
+    public IEnumerable<StudyStreamDto> Streams => _streams.Select(stream => stream.AsDto());
+    public IEnumerable<TeacherDto> Teachers => _teachers.Select(teacher => teacher.AsDto());
     public FacultyId FacultyId => _facultyId;
 
     public void AddStudent(GroupName streamName, ExtendedStudentDto studentDto)
@@ -56,7 +56,7 @@ public class OgnpCourse : IEquatable<OgnpCourse>
         Teacher? needle = _teachers.FirstOrDefault(teacher => teacher.Name == name);
         if (needle is null)
             return null;
-        return new TeacherDto(needle);
+        return needle.AsDto();
     }
 
     public void AddLesson(StudyStream stream, Lesson lesson)
@@ -71,6 +71,11 @@ public class OgnpCourse : IEquatable<OgnpCourse>
     public void RemoveLesson(StudyStream stream, Lesson lesson)
     {
         stream.RemoveLesson(lesson);
+    }
+
+    public OgnpCourseDto AsDto()
+    {
+        return new OgnpCourseDto(this);
     }
 
     public bool Equals(OgnpCourse? other)

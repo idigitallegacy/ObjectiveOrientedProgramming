@@ -23,4 +23,9 @@ public class ExtendedStudentDto
     public string Name { get; }
     public Group Group { get; }
     public int Id { get; }
+
+    public ExtendedStudent ToExtendedStudent()
+    {
+        return new ExtendedStudent(this);
+    }
 }

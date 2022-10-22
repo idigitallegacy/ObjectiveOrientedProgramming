@@ -56,6 +56,11 @@ public class Schedule : IScheduler, IEquatable<Schedule>
             });
     }
 
+    public ScheduleDto AsDto()
+    {
+        return new ScheduleDto(this);
+    }
+
     public bool Equals(Schedule? other)
     {
         if (ReferenceEquals(null, other)) return false;

@@ -6,10 +6,15 @@ public class AudienceDto
 {
     public AudienceDto(Audience audience)
     {
-        ScheduleDto = audience.Schedule;
+        Schedule = audience.Schedule;
         Number = audience.Number;
     }
 
-    public ScheduleDto ScheduleDto { get; }
+    public ScheduleDto Schedule { get; }
     public int Number { get; }
+
+    public Audience ToAudience()
+    {
+        return new Audience(this);
+    }
 }

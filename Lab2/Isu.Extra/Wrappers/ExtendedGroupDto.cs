@@ -22,4 +22,9 @@ public class ExtendedGroupDto
     public IReadOnlyCollection<ExtendedStudentDto> Students { get; }
     public int Capacity { get; }
     public FacultyId FacultyId { get; }
+
+    public ExtendedGroup ToExtendedGroup()
+    {
+        return new ExtendedGroup(this);
+    }
 }

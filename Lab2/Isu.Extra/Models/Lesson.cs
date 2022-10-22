@@ -24,7 +24,7 @@ public class Lesson : IEquatable<Lesson>
         StartTime = startTime;
         EndTime = endTime;
         Teacher = teacher;
-        AudienceDto = new AudienceDto(audience);
+        AudienceDto = audience.AsDto();
         AssociatedStream = associatedStream;
         AssociatedGroup = associatedGroup;
     }
@@ -34,12 +34,12 @@ public class Lesson : IEquatable<Lesson>
         DayOfWeek = copiedLessonDto.DayOfWeek;
         StartTime = copiedLessonDto.StartTime;
         EndTime = copiedLessonDto.EndTime;
-        Teacher = new TeacherDto(copiedLessonDto.Teacher).ToTeacher();
-        AudienceDto = new AudienceDto(copiedLessonDto.AudienceDto.ToAudience());
+        Teacher = copiedLessonDto.Teacher.AsDto().ToTeacher();
+        AudienceDto = copiedLessonDto.AudienceDto.ToAudience().AsDto();
         if (copiedLessonDto.AssociatedStream is not null)
-            AssociatedStream = new StudyStream(new StudyStreamDto(copiedLessonDto.AssociatedStream));
+            AssociatedStream = new StudyStream(copiedLessonDto.AssociatedStream.AsDto());
         if (copiedLessonDto.AssociatedGroup is not null)
-            AssociatedGroup = new ExtendedGroup(new ExtendedGroupDto(copiedLessonDto.AssociatedGroup));
+            AssociatedGroup = new ExtendedGroup(copiedLessonDto.AssociatedGroup.AsDto());
     }
 
     public DayOfWeek DayOfWeek { get; }
@@ -50,6 +50,11 @@ public class Lesson : IEquatable<Lesson>
     public Teacher Teacher { get; }
     public StudyStream? AssociatedStream { get; }
     public ExtendedGroup? AssociatedGroup { get; }
+
+    public LessonDto AsDto()
+    {
+        return new LessonDto(this);
+    }
 
     public override bool Equals(object? obj)
     {

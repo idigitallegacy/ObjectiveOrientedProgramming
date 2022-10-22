@@ -15,4 +15,9 @@ public class OgnpCourseDto
     public IEnumerable<StudyStreamDto> Streams { get; }
     public IEnumerable<TeacherDto> Teachers { get; }
     public FacultyId FacultyId { get; }
+
+    public OgnpCourse ToOgnpCourse()
+    {
+        return new OgnpCourse(this);
+    }
 }

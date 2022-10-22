@@ -25,7 +25,7 @@ public class Teacher : IScheduler, IEquatable<Teacher>
 
     public string Name { get; }
     public FacultyId FacultyId { get; }
-    public ScheduleDto Schedule => new ScheduleDto(_schedule);
+    public ScheduleDto Schedule => _schedule.AsDto();
 
     public void AddLesson(Lesson lesson)
     {
@@ -40,6 +40,11 @@ public class Teacher : IScheduler, IEquatable<Teacher>
     public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
+    }
+
+    public TeacherDto AsDto()
+    {
+        return new TeacherDto(this);
     }
 
     public bool Equals(Teacher? other)

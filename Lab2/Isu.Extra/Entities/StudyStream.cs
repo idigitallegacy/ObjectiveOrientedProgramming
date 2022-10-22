@@ -22,10 +22,10 @@ public class StudyStream : IScheduler, IEquatable<StudyStream>
     public StudyStream(StudyStreamDto copiedStreamDto)
     {
         _schedule = new Schedule(copiedStreamDto.Schedule);
-        _group = new ExtendedGroup(new ExtendedGroupDto(copiedStreamDto.Group));
+        _group = new ExtendedGroup(copiedStreamDto.Group.AsDto());
     }
 
-    public ScheduleDto Schedule => new ScheduleDto(_schedule);
+    public ScheduleDto Schedule => _schedule.AsDto();
     public ExtendedGroup Group => _group;
 
     public void AddStudent(ExtendedStudentDto studentDto)
@@ -53,6 +53,11 @@ public class StudyStream : IScheduler, IEquatable<StudyStream>
     public Lesson? FindLesson(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
         return _schedule.FindLesson(dayOfWeek, startTime, endTime);
+    }
+
+    public StudyStreamDto AsDto()
+    {
+        return new StudyStreamDto(this);
     }
 
     public bool Equals(StudyStream? other)

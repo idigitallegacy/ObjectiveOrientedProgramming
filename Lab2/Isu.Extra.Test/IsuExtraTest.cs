@@ -125,6 +125,6 @@ public class IsuExtraTest
         List<ExtendedStudentDto> students = new List<ExtendedStudentDto> { studentDto };
         service.ScheduleStudent(studentDto, streamName, courseDto);
 
-        Assert.Equal(students, service.FindStudentsAtStream(streamName));
+        Assert.Equal(students.Select(student => student.ToExtendedStudent()), service.FindStudentsAtStream(streamName).Select(student => student.ToExtendedStudent()));
     }
 }

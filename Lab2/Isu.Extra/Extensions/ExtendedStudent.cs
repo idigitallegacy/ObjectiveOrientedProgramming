@@ -17,14 +17,14 @@ public class ExtendedStudent : Student, IEquatable<Student>
         : base(name, group, id)
     {
         FacultyId = group.GroupName.GetFacultyId();
-        _group = new ExtendedGroupDto(group);
+        _group = group.AsDto();
     }
 
     public ExtendedStudent(ExtendedStudentDto copiedStudentDto)
         : base(copiedStudentDto.Name, copiedStudentDto.Group, copiedStudentDto.Id)
     {
         FacultyId = new FacultyId(copiedStudentDto.FacultyId);
-        _group = new ExtendedGroupDto(new ExtendedGroup(copiedStudentDto.ExtendedGroup));
+        _group = new ExtendedGroup(copiedStudentDto.ExtendedGroup).AsDto();
     }
 
     public FacultyId FacultyId { get; }
@@ -51,6 +51,11 @@ public class ExtendedStudent : Student, IEquatable<Student>
         if (needleCourseIndex == -1)
             throw ExtendedStudentException.UnableToFindOgnp();
         _ognpCourses[needleCourseIndex] = newOgnpCourse;
+    }
+
+    public ExtendedStudentDto AsDto()
+    {
+        return new ExtendedStudentDto(this);
     }
 
     public bool Equals(Student? other)
