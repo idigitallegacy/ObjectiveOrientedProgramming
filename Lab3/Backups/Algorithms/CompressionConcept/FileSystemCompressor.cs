@@ -9,8 +9,6 @@ namespace ConsoleApp1.Algorithms.Compression;
 public class FileSystemCompressor : ICompressor, IDisposable
 {
     private List<MemoryStream> _data = new ();
-    private string _fileHeader = "<FILE>";
-    private string _fileEnding = "</FILE>";
 
     public void AddFile(IBackupObject backupObject) => _data.Add(backupObject.Contents);
 
@@ -19,16 +17,11 @@ public class FileSystemCompressor : ICompressor, IDisposable
         if (string.IsNullOrEmpty(outputPath))
             throw BackupException.CompressionException("Output path is null");
 
-        byte[] header = ConvertStringToByteArray(_fileHeader);
-        byte[] footer = ConvertStringToByteArray(_fileEnding);
-
         using (FileStream fileStream = new FileStream(outputPath, FileMode.OpenOrCreate))
         {
             _data.ForEach(data =>
             {
-                fileStream.Write(header);
                 data.WriteTo(fileStream);
-                fileStream.Write(footer);
             });
         }
     }
