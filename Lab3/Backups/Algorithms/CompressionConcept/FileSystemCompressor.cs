@@ -31,19 +31,4 @@ public class FileSystemCompressor : ICompressor, IDisposable
     public void Accept(IVisitor visitor) => visitor.Visit(this);
 
     public void Dispose() => _data.ForEach(data => data.Dispose());
-
-    private static byte[] ConvertStringToByteArray(string obj)
-    {
-        XmlSerializer serializer = new XmlSerializer(typeof(string));
-        MemoryStream ms = new MemoryStream();
-        serializer.Serialize(ms, obj);
-        return ms.ToArray();
-    }
-
-    private static string ConvertByteArrayToString(byte[] byteArray)
-    {
-        Stream stream = new MemoryStream(byteArray);
-        return (string?)new XmlSerializer(byteArray.GetType()).Deserialize(stream) ??
-               throw BackupException.CompressionException("Unable to deserialize byte array (FileSystemCompressor.ConvertByteArrayToString)");
-    }
 }
