@@ -47,6 +47,8 @@ public class BackupTask : IBackupTask
         Repository.Save(this);
     }
 
+    public void AddRestorePoint(IRestorePoint restorePoint) => _backupHistory.Add(restorePoint);
+
     public void Accept(IVisitor visitor) => visitor.Visit(this);
 
     public void DeleteRestorePoint(IRestorePoint restorePoint) => _backupHistory.Remove(restorePoint);
