@@ -16,8 +16,9 @@ public class RegisterInterface
 
         System.Console.WriteLine("Enter preferred base rate for central bank (double):");
         baseRate = double.Parse(System.Console.ReadLine() ?? string.Empty, NumberStyles.Any, CultureInfo.InvariantCulture);
+        CentralBank.GetInstance().UpdateBaseInterestRate(baseRate);
 
-        return new CentralBank(baseRate);
+        return CentralBank.GetInstance();
     }
 
     public static IBank SetupBank(ICentralBank centralBank, string prefix)

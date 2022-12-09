@@ -5,14 +5,17 @@ namespace Banks.Entities.BankConcept;
 
 public class CentralBank : ICentralBank
 {
+    private static readonly ICentralBank _instanceHolder = new CentralBank();
     private List<IBank> _banks = new ();
 
-    public CentralBank(double baseRate)
+    private CentralBank()
     {
-        BaseRate = baseRate;
+        BaseRate = 1.0;
     }
 
     public double BaseRate { get; private set; }
+
+    public static ICentralBank GetInstance() => _instanceHolder;
 
     public IBank CreateBank(
         double debitInterestRate,

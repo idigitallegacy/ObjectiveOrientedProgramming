@@ -9,7 +9,8 @@ public class Test
     public void SimpleTest_ItsBetterToTestWithConsoleProject()
     {
         double baseRate = 3.0;
-        ICentralBank centralBank = new CentralBank(baseRate);
+        CentralBank.GetInstance().UpdateBaseInterestRate(baseRate);
+        ICentralBank centralBank = CentralBank.GetInstance();
         Assert.Equal(baseRate, centralBank.BaseRate);
     }
 }
