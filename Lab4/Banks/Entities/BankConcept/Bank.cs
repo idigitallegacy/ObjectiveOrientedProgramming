@@ -325,7 +325,7 @@ public class Bank : IBank
 
     public void AcceptTimeNotification(TimeSpan difference)
     {
-        int daysPerYear = 265;
+        int daysPerYear = 365;
         int percetageMultiplier = 100;
         _clientAccounts.ForEach(clientAccount =>
         {
