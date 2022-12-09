@@ -1,4 +1,5 @@
 using Banks.Entities.BankConcept;
+using Banks.Exceptions;
 
 namespace Banks.Models.TimeFlowConcept;
 
@@ -14,7 +15,8 @@ public class TimeFlowMessageBroker
 
     public void RemoveSubscriber(IBank bank)
     {
-        _banks.Remove(bank);
+        if (!_banks.Remove(bank))
+            throw TimeFlowException.InvalidSubscriber();
     }
 
     public void Notify(TimeSpan difference)
