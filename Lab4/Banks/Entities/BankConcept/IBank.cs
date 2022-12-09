@@ -10,8 +10,8 @@ namespace Banks.Entities.BankConcept;
 
 public interface IBank : IEquatable<IBank>
 {
-    public Guid BankId { get; }
-    public BankInterestPolicy InterestPolicy { get; }
+    Guid BankId { get; }
+    BankInterestPolicy InterestPolicy { get; }
 
     BankClient RegisterClient(string name, string surname, Passport? passport = null, Address? address = null);
     BankClient AddClientData(BankClient client, Passport? newPassport = null, Address? newAddress = null);

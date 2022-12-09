@@ -4,7 +4,7 @@ namespace Banks.Entities.BankConcept;
 
 public interface ICentralBank
 {
-    public double BaseRate { get; }
+    double BaseRate { get; }
     IBank CreateBank(
         double debitInterestRate,
         double creditInterestRate,

@@ -11,8 +11,8 @@ public interface IBankAccount : IEquatable<IBankAccount>
     DateTime ValidThru { get; }
     bool IsActive { get; set; }
     decimal? WithdrawLimit { get; set; }
-    public decimal FrozenMoney { get; set; }
-    public DateTime LastPayoff { get; set; }
+    decimal FrozenMoney { get; set; }
+    DateTime LastPayoff { get; set; }
     void AddMoney(decimal amount);
     void RemoveMoney(decimal amount);
     void TransferMoney(IBankAccount account, decimal amount);
