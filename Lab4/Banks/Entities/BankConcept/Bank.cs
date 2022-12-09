@@ -318,6 +318,8 @@ public class Bank : IBank
 
     public void AcceptTimeNotification(TimeSpan difference)
     {
+        int daysPerYear = 265;
+        int percetageMultiplier = 100;
         _clientAccounts.ForEach(clientAccount =>
         {
             clientAccount.Accounts.ForEach(bankAccount =>
@@ -325,14 +327,14 @@ public class Bank : IBank
                 int daysDifference = difference.Days;
                 if (bankAccount is DebitAccount | bankAccount is DepositAccount)
                 {
-                    double dayInterest = bankAccount.InterestRate / 1200.00;
+                    double dayInterest = bankAccount.InterestRate / (daysPerYear * percetageMultiplier);
                     for (int daysPassed = 0; daysPassed < daysDifference; daysPassed++)
                         bankAccount.FrozenMoney += Convert.ToDecimal(dayInterest * Convert.ToDouble(bankAccount.AccountValue + bankAccount.FrozenMoney));
                 }
 
                 if (bankAccount is CreditAccount)
                 {
-                    double dayInterest = bankAccount.CreditRate / 1200.00;
+                    double dayInterest = bankAccount.CreditRate / (daysPerYear * percetageMultiplier);
                     for (int daysPassed = 0; daysPassed < daysDifference; daysPassed++)
                         bankAccount.FrozenMoney -= Convert.ToDecimal(dayInterest * Convert.ToDouble(bankAccount.AccountValue + bankAccount.FrozenMoney));
                 }
