@@ -267,31 +267,43 @@ public class Bank : IBank
 
     public void SubscribeForDebitRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.AddDebitSuscriber(client);
     }
 
     public void SubscribeForCreditRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.AddCreditSuscriber(client);
     }
 
     public void SubscribeForDepositRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.AddDepositSuscriber(client);
     }
 
     public void UnsubscribeFromDebitRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.RemoveDebitSuscriber(client);
     }
 
     public void UnsubscribeFromCreditRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.RemoveCreditSuscriber(client);
     }
 
     public void UnsubscribeFromDepositRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.RemoveDepositSuscriber(client);
     }
 
