@@ -1,6 +1,7 @@
 using System.Globalization;
 using Banks.Entities.BankConcept;
 using Banks.Models.AddressConcept;
+using Banks.Models.BankConstructorOptionsConcept;
 using Banks.Models.BankInterestPolicyConcept;
 using Banks.Models.PassportConcept;
 
@@ -45,7 +46,15 @@ public class RegisterInterface
         System.Console.WriteLine($"{prefix} \tWould you like to add deposit interest ranges (y/n)?");
         interestRanges = BuildInterestRanges(centralBank, true, prefix);
 
-        return centralBank.CreateBank(debitInterestRate, creditInterestRate, defaultWithdrawLimit, defaultCreditCoefficient, interestRanges);
+        BankConstructorOptions options = new BankConstructorOptionsBuilder()
+            .SetDebitInterestRate(debitInterestRate)
+            .SetCreditInterestRate(creditInterestRate)
+            .SetDefaultWithdrawLimit(defaultWithdrawLimit)
+            .SetDefaultCreditCoefficient(defaultCreditCoefficient)
+            .SetDepositInterestRates(interestRanges)
+            .Build();
+
+        return centralBank.CreateBank(options);
     }
 
     public static List<DepositInterestRange> BuildInterestRanges(ICentralBank centralBank, bool awaitUserAnswer, string prefix)

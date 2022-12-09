@@ -1,3 +1,4 @@
+using Banks.Models.BankConstructorOptionsConcept;
 using Banks.Models.BankInterestPolicyConcept;
 using Banks.Models.TimeFlowConcept;
 
@@ -17,20 +18,9 @@ public class CentralBank : ICentralBank
 
     public static ICentralBank GetInstance() => _instanceHolder;
 
-    public IBank CreateBank(
-        double debitInterestRate,
-        double creditInterestRate,
-        decimal defaultWithdrawLimit,
-        double defaultCreditCoefficient,
-        List<DepositInterestRange> depositInterestRates)
+    public IBank CreateBank(BankConstructorOptions options)
     {
-        IBank bank = new Bank(
-            BaseRate,
-            debitInterestRate,
-            creditInterestRate,
-            defaultWithdrawLimit,
-            defaultCreditCoefficient,
-            depositInterestRates);
+        IBank bank = new Bank(BaseRate, options);
         _banks.Add(bank);
         TimeFlow.Instance.MessageBroker.AddSubscriber(bank);
         return bank;

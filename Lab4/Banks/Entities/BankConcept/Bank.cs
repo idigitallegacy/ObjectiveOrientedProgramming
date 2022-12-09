@@ -2,6 +2,7 @@ using Banks.Exceptions;
 using Banks.Models.AddressConcept;
 using Banks.Models.BankAccountConcept;
 using Banks.Models.BankClientConcept;
+using Banks.Models.BankConstructorOptionsConcept;
 using Banks.Models.BankInterestPolicyConcept;
 using Banks.Models.ClientAccountConcept;
 using Banks.Models.PassportConcept;
@@ -24,20 +25,14 @@ public class Bank : IBank
     private List<Transaction> _transactions = new ();
     private BankMessageBroker _messageBroker = new ();
 
-    public Bank(
-        double baseRate,
-        double debitInterestRate,
-        double creditInterestRate,
-        decimal defaultWithdrawLimit,
-        double defaultCreditCoefficient,
-        List<DepositInterestRange> depositInterestRates)
+    public Bank(double baseRate, BankConstructorOptions options)
     {
         _baseRate = baseRate;
-        _defaultWithdrawLimit = defaultWithdrawLimit;
-        _defaultCreditCoefficient = defaultCreditCoefficient;
-        InterestPolicy.DebitInterest = baseRate - debitInterestRate;
-        InterestPolicy.CreditInterest = baseRate + creditInterestRate;
-        InterestPolicy.DepositInterest.AddRange(depositInterestRates);
+        _defaultWithdrawLimit = options.DefaultWithdrawLimit;
+        _defaultCreditCoefficient = options.DefaultCreditCoefficient;
+        InterestPolicy.DebitInterest = baseRate - options.DebitInterestRate;
+        InterestPolicy.CreditInterest = baseRate + options.CreditInterestRate;
+        InterestPolicy.DepositInterest.AddRange(options.DepositInterestRates);
         InterestPolicy.DepositInterest.ForEach(rate => rate.InterestRate = baseRate - rate.InterestRate);
     }
 
