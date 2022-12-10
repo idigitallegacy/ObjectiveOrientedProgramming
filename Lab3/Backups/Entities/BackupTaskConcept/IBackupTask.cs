@@ -16,5 +16,6 @@ public interface IBackupTask
     public void DeleteBackupObject(IBackupObject backupObject);
     public void CreateRestorePoint();
     public void DeleteRestorePoint(IRestorePoint restorePoint);
+    public void AddRestorePoint(IRestorePoint restorePoint);
     public void Accept(IVisitor visitor);
 }

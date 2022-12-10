@@ -21,4 +21,5 @@ public class Storage : IStorage
     public IReadOnlyCollection<IBackupObject> BackupObjects => _backupObjects.AsReadOnly();
 
     public void AddBackupObject(IBackupObject backupObject) => _backupObjects.Add(backupObject);
+    public void RemoveBackupObject(IBackupObject backupObject) => _backupObjects.Remove(backupObject);
 }

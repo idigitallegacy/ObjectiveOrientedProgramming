@@ -9,4 +9,5 @@ public interface IStorage
     IReadOnlyCollection<IBackupObject> BackupObjects { get; }
 
     void AddBackupObject(IBackupObject backupObject);
+    void RemoveBackupObject(IBackupObject backupObject);
 }
