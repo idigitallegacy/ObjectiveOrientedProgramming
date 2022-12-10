@@ -6,4 +6,6 @@ public class TimeFlowException : Exception
         : base(message) { }
 
     public static TimeFlowException WrongNewDate(string message = "") => new TimeFlowException(message);
+
+    public static TimeFlowException InvalidSubscriber(string message = "") => new TimeFlowException(message);
 }

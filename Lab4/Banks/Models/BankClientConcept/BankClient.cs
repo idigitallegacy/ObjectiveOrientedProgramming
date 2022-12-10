@@ -22,8 +22,8 @@ public class BankClient : IEquatable<BankClient>
 
     public string Name { get; }
     public string Surname { get; }
-    public Passport? Passport { get; set; }
-    public Address? Address { get; set; }
+    public Passport? Passport { get; internal set; }
+    public Address? Address { get; internal set; }
     public int ClientId { get; }
 
     public void AcceptNotification(string message) { Console.WriteLine($"Client with ID: {ClientId} notified: {message}"); }

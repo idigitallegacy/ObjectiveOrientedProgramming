@@ -3,7 +3,7 @@ using Banks.Models.TimeFlowConcept;
 
 namespace Banks.Models.BankAccountConcept;
 
-public class BankAccount : IBankAccount, IEquatable<BankAccount>
+public abstract class BankAccount : IBankAccount, IEquatable<BankAccount>
 {
     protected BankAccount(int accountId, decimal creditLimit, double creditRate, double interestRate, DateTime validThru, decimal? withdrawLimit = null)
     {

@@ -1,3 +1,4 @@
+using Banks.Exceptions;
 using Banks.Models.BankClientConcept;
 
 namespace Banks.Entities.BankConcept;
@@ -25,17 +26,20 @@ public class BankMessageBroker
 
     public void RemoveDebitSuscriber(BankClient client)
     {
-        _debitSubscribers.Remove(client);
+        if (!_debitSubscribers.Remove(client))
+            throw BankClientException.WrongClient();
     }
 
     public void RemoveCreditSuscriber(BankClient client)
     {
-        _creditSubscribers.Remove(client);
+        if (!_creditSubscribers.Remove(client))
+            throw BankClientException.WrongClient();
     }
 
     public void RemoveDepositSuscriber(BankClient client)
     {
-        _depositSubscribers.Remove(client);
+        if (!_depositSubscribers.Remove(client))
+            throw BankClientException.WrongClient();
     }
 
     public void NotifyDebitSuscribers(string message)

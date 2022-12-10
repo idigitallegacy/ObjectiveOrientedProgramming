@@ -2,6 +2,7 @@ using Banks.Exceptions;
 using Banks.Models.AddressConcept;
 using Banks.Models.BankAccountConcept;
 using Banks.Models.BankClientConcept;
+using Banks.Models.BankConstructorOptionsConcept;
 using Banks.Models.BankInterestPolicyConcept;
 using Banks.Models.ClientAccountConcept;
 using Banks.Models.PassportConcept;
@@ -24,20 +25,14 @@ public class Bank : IBank
     private List<Transaction> _transactions = new ();
     private BankMessageBroker _messageBroker = new ();
 
-    public Bank(
-        double baseRate,
-        double debitInterestRate,
-        double creditInterestRate,
-        decimal defaultWithdrawLimit,
-        double defaultCreditCoefficient,
-        List<DepositInterestRange> depositInterestRates)
+    public Bank(double baseRate, BankConstructorOptions options)
     {
         _baseRate = baseRate;
-        _defaultWithdrawLimit = defaultWithdrawLimit;
-        _defaultCreditCoefficient = defaultCreditCoefficient;
-        InterestPolicy.DebitInterest = baseRate - debitInterestRate;
-        InterestPolicy.CreditInterest = baseRate + creditInterestRate;
-        InterestPolicy.DepositInterest.AddRange(depositInterestRates);
+        _defaultWithdrawLimit = options.DefaultWithdrawLimit;
+        _defaultCreditCoefficient = options.DefaultCreditCoefficient;
+        InterestPolicy.DebitInterest = baseRate - options.DebitInterestRate;
+        InterestPolicy.CreditInterest = baseRate + options.CreditInterestRate;
+        InterestPolicy.DepositInterest.AddRange(options.DepositInterestRates);
         InterestPolicy.DepositInterest.ForEach(rate => rate.InterestRate = baseRate - rate.InterestRate);
     }
 
@@ -267,31 +262,43 @@ public class Bank : IBank
 
     public void SubscribeForDebitRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.AddDebitSuscriber(client);
     }
 
     public void SubscribeForCreditRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.AddCreditSuscriber(client);
     }
 
     public void SubscribeForDepositRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.AddDepositSuscriber(client);
     }
 
     public void UnsubscribeFromDebitRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.RemoveDebitSuscriber(client);
     }
 
     public void UnsubscribeFromCreditRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.RemoveCreditSuscriber(client);
     }
 
     public void UnsubscribeFromDepositRateChanges(BankClient client)
     {
+        if (_clientAccounts.Find(clientAccount => clientAccount.PersonInfo.Equals(client)) is null)
+            throw BankException.WrongClient();
         _messageBroker.RemoveDepositSuscriber(client);
     }
 
@@ -318,6 +325,8 @@ public class Bank : IBank
 
     public void AcceptTimeNotification(TimeSpan difference)
     {
+        int daysPerYear = 365;
+        int percetageMultiplier = 100;
         _clientAccounts.ForEach(clientAccount =>
         {
             clientAccount.Accounts.ForEach(bankAccount =>
@@ -325,14 +334,14 @@ public class Bank : IBank
                 int daysDifference = difference.Days;
                 if (bankAccount is DebitAccount | bankAccount is DepositAccount)
                 {
-                    double dayInterest = bankAccount.InterestRate / 1200.00;
+                    double dayInterest = bankAccount.InterestRate / (daysPerYear * percetageMultiplier);
                     for (int daysPassed = 0; daysPassed < daysDifference; daysPassed++)
                         bankAccount.FrozenMoney += Convert.ToDecimal(dayInterest * Convert.ToDouble(bankAccount.AccountValue + bankAccount.FrozenMoney));
                 }
 
                 if (bankAccount is CreditAccount)
                 {
-                    double dayInterest = bankAccount.CreditRate / 1200.00;
+                    double dayInterest = bankAccount.CreditRate / (daysPerYear * percetageMultiplier);
                     for (int daysPassed = 0; daysPassed < daysDifference; daysPassed++)
                         bankAccount.FrozenMoney -= Convert.ToDecimal(dayInterest * Convert.ToDouble(bankAccount.AccountValue + bankAccount.FrozenMoney));
                 }

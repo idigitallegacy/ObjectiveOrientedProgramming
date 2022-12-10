@@ -1,16 +1,12 @@
+using Banks.Models.BankConstructorOptionsConcept;
 using Banks.Models.BankInterestPolicyConcept;
 
 namespace Banks.Entities.BankConcept;
 
 public interface ICentralBank
 {
-    public double BaseRate { get; }
-    IBank CreateBank(
-        double debitInterestRate,
-        double creditInterestRate,
-        decimal defaultWithdrawLimit,
-        double defaultCreditCoefficient,
-        List<DepositInterestRange> depositInterestRates);
+    double BaseRate { get; }
+    IBank CreateBank(BankConstructorOptions options);
     void UpdateBaseInterestRate(double newRate);
     void UpdateDebitInterestRate(IBank bank, double newRate);
     void UpdateCreditInterestRate(IBank bank, double newRate);
