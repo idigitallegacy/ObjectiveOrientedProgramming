@@ -1,4 +1,5 @@
 using Messenger.DataAccess.Messages.Objects;
+using Messenger.Domains.Exceptions;
 using Messenger.Domains.Resources;
 
 namespace Messenger.DataAccess.Resources.Objects;
@@ -9,7 +10,7 @@ public class EMail : Resource
     public override void AddMessage(IMessage message)
     {
         if (message is not EMailMessage)
-            throw new NotImplementedException(); // todo
+            ResourceException.EMailException($"Unable to add message typed {message.GetType()}");
         InternalMessages.Add(message);
     }
 

@@ -1,3 +1,4 @@
+using Messenger.Domains.Exceptions;
 using Messenger.Domains.Messages;
 
 namespace Messenger.DataAccess.Messages.Objects;
@@ -9,7 +10,7 @@ public class EMailMessage : Message
     public override void Reply(IMessage replyMessage)
     {
         if (replyMessage is not EMailMessage)
-            throw new Exception(); // todo
+            throw MessageException.EMailException($"Unable to create E-Mail reply with type of replyMessage {replyMessage.GetType()}");
         base.Reply(replyMessage);
     }
 

@@ -1,4 +1,5 @@
 using Messenger.DataAccess.Messages.Objects;
+using Messenger.Domains.Exceptions;
 using Messenger.Domains.Resources;
 
 namespace Messenger.DataAccess.Resources.Objects;
@@ -8,7 +9,7 @@ public abstract class Resource : IResource
     protected Resource(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new Exception(); // todo
+            ResourceException.InputEmpty();
         Name = name;
         InternalMessages =  new List<IMessage>();
     }

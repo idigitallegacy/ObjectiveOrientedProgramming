@@ -1,3 +1,5 @@
+using Messenger.Domains.Exceptions;
+
 namespace Messenger.DataAccess.Employees;
 
 public static class EmployeeValidator
@@ -6,10 +8,10 @@ public static class EmployeeValidator
     {
         if (targetEmployee is null)
             return;
-        if (sourceEmployee.Ordinates.Contains(targetEmployee) | targetEmployee.Ordinates.Contains(sourceEmployee))
-            throw new Exception(); // todo
-        if (RecursiveOrdinatory(sourceEmployee, targetEmployee))
-            throw new Exception(); // todo
+        if (sourceEmployee.Ordinates.Contains(targetEmployee) |
+            targetEmployee.Ordinates.Contains(sourceEmployee) |
+            RecursiveOrdinatory(sourceEmployee, targetEmployee))
+            throw EmployeeException.RecursiveOrdinatory(); 
     } 
     
     private static bool RecursiveOrdinatory(Employee sourceEmployee, Employee targetEmployee)

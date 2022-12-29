@@ -13,8 +13,6 @@ public class ResourceSerializable
     }
     public ResourceSerializable(string name, List<MessageSerializable> messages)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new Exception(); // todo
         Name = name;
         Messages =  messages;
     }

@@ -1,3 +1,4 @@
+using Messenger.Domains.Exceptions;
 using Messenger.Domains.Messages;
 
 namespace Messenger.DataAccess.Messages.Objects;
@@ -8,7 +9,7 @@ public class Sms : Message
     public override void Reply(IMessage replyMessage)
     {
         if (replyMessage is not Sms)
-            throw new Exception(); // todo
+            throw MessageException.SmsException($"Unable to create SMS with type of replyMessage {replyMessage.GetType()}");
         base.Reply(replyMessage);
     }
 

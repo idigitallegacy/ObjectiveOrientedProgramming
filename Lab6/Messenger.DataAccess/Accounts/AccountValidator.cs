@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Messenger.Config;
 using Messenger.Domains;
+using Messenger.Domains.Exceptions;
 
 namespace Messenger.DataAccess.Accounts;
 
@@ -9,20 +10,20 @@ public static class AccountValidator
     public static void ValidateLogin(string login)
     {
         if (string.IsNullOrWhiteSpace(login))
-            throw new Exception(); // todo
+            throw AccountException.InputEmpty();
         if (login.Length < DefaultValues.Account.MinimalLoginLength)
-            throw new Exception(); // todo
+            throw AccountException.LoginTooShort();
         if (login.Length > DefaultValues.Account.MaximalLoginLength)
-            throw new Exception(); // todo
+            throw AccountException.LoginTooLong();
         if (!Regex.IsMatch(login, RegexMatches.LoginMatch))
-            throw new Exception(); // todo
+            throw AccountException.RegexMissmatch();
     }
     
-    public static void ValidatePassword(string login)
+    public static void ValidatePassword(string password)
     {
-        if (string.IsNullOrWhiteSpace(login))
-            throw new Exception(); // todo
-        if (login.Length < DefaultValues.Account.MinimalPasswordLength)
-            throw new Exception(); // todo
+        if (string.IsNullOrWhiteSpace(password))
+            throw AccountException.InputEmpty();
+        if (password.Length < DefaultValues.Account.MinimalPasswordLength)
+            throw AccountException.RegexMissmatch();
     }
 }

@@ -59,7 +59,7 @@ public class Application
     public void AddOrdinate(Employee mainEmployee, Employee ordinate)
     {
         if (ordinate.Director is not null)
-            throw new Exception(); // todo
+            throw Domains.Exceptions.ApplicationException.OrdinateHasDirector();
         mainEmployee.AddOrdinate(ordinate);
         ordinate.UpdateDirector(mainEmployee);
     }
@@ -119,7 +119,7 @@ public class Application
     public List<Report> GetReports(Employee employee)
     {
         if (employee.Ordinates.Count == 0)
-            throw new Exception(); // todo
+            throw Domains.Exceptions.ApplicationException.OrdinateIsNotDirector();
         return _reportAgregator.GetReports(employee);
     }
 }

@@ -1,5 +1,6 @@
 using Messenger.DataAccess.Messages.Objects;
 using Messenger.DataAccess.Messages.Validators;
+using Messenger.Domains.Exceptions;
 using Messenger.Domains.Messages;
 
 namespace Messenger.DataAccess.Messages.Generators;
@@ -26,16 +27,16 @@ public class MessageGenerator
     
     public static SocialFeedback GenerateSocialFeedbackFromSerialized(MessageSerializable serialized)
     {
-        throw new NotImplementedException();
+        throw MessageException.DeserializationNotSupported();
     }
     
     public static Sms GenerateSmsFromSerialized(MessageSerializable serialized)
     {
-        throw new NotImplementedException();
+        throw MessageException.DeserializationNotSupported();
     }
 
     public static EMailMessage GenerateEMailMessageFromSerialized(MessageSerializable serialized)
     {
-        throw new NotImplementedException();
+        throw MessageException.DeserializationNotSupported();
     }
 }

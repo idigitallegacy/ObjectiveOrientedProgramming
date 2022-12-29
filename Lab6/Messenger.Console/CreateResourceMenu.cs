@@ -44,6 +44,6 @@ public class CreateResourceMenu
             case "3": return RegisterSocial(application);
         }
 
-        throw new Exception(); // todo
+        throw new Exception("Answer not recognized");
     }
 }

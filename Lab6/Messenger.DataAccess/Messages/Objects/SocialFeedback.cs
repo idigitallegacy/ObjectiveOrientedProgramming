@@ -1,3 +1,4 @@
+using Messenger.Domains.Exceptions;
 using Messenger.Domains.Messages;
 
 namespace Messenger.DataAccess.Messages.Objects;
@@ -8,7 +9,7 @@ public class SocialFeedback : Message
     public override void Reply(IMessage replyMessage)
     {
         if (replyMessage is not SocialFeedback)
-            throw new Exception(); // todo
+            throw MessageException.SocialFeedbackException($"Unable to create social feedback with type of replyMessage {replyMessage.GetType()}");
         base.Reply(replyMessage);
     }
 
