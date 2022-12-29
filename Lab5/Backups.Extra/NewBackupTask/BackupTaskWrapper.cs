@@ -105,8 +105,7 @@ public class BackupTaskWrapper : IBackupTask
 
     public void RestoreState(string json)
     {
-        BackupStateSerializable? deserializedState = null;
-        deserializedState = JsonSerializer.Deserialize<BackupStateSerializable>(json);
+        BackupStateSerializable? deserializedState = JsonSerializer.Deserialize<BackupStateSerializable>(json);
 
         _backupTask = new BackupTaskBuilder()
             .SetName(deserializedState?.Name ?? throw BackupTaskWrapperException.UnableToLoadState_InvalidName())
