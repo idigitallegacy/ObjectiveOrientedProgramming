@@ -5,11 +5,14 @@ namespace Isu.Entities;
 
 public class Group
 {
-    private const int MaxStudentsAmount = 30;
+    private int _maxStudentsAmount;
     private List<Student> _students = new ();
 
-    public Group(GroupName groupName)
+    public Group(GroupName groupName, int capacity = 30)
     {
+        if (capacity < 1)
+            throw new IsuException("Group capacity must be at least 1.");
+        _maxStudentsAmount = capacity;
         GroupName = groupName;
     }
 
@@ -28,7 +31,7 @@ public class Group
 
     public void AddStudent(Student student)
     {
-        if (_students.Count == MaxStudentsAmount)
+        if (_students.Count == _maxStudentsAmount)
             throw new IsuException("Unable to add student: group is full.");
 
         if (_students.Contains(student))
